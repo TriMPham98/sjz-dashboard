@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Header from "../components/Header";
 
 export default function Home() {
   return (
@@ -7,6 +8,8 @@ export default function Home() {
         <title>GrooveGamer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <Header />
 
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-center mb-8">
