@@ -12,7 +12,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-900 text-gray-100">
       <Head>
         <title>GrooveGamer</title>
         <link rel="icon" href="/favicon.ico" />
@@ -21,10 +21,10 @@ export default function Home() {
       <Header />
 
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8">
+        <h1 className="text-4xl font-bold text-center mb-8 text-blue-400">
           Welcome to GrooveGamer
         </h1>
-        <p className="text-xl text-center mb-8">
+        <p className="text-xl text-center mb-8 text-gray-300">
           Your journey to musical mastery begins here!
         </p>
         <UserForm onUserAdded={handleUserAdded} />

@@ -39,15 +39,15 @@ export default function UserForm({ onUserAdded }) {
     <div className="max-w-md mx-auto mt-8">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-300 text-sm font-bold mb-2"
             htmlFor="username">
             Username
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400"
             id="username"
             type="text"
             placeholder="Enter username"
@@ -67,7 +67,7 @@ export default function UserForm({ onUserAdded }) {
       {message && (
         <p
           className={`text-center ${
-            isError ? "text-red-500" : "text-green-500"
+            isError ? "text-red-400" : "text-green-400"
           }`}>
           {message}
         </p>

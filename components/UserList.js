@@ -20,10 +20,12 @@ export default function UserList({ triggerFetch }) {
   }, [triggerFetch]);
 
   return (
-    <div className="mt-8 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-2xl font-bold mb-4">Registered Users</h2>
+    <div className="mt-8 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <h2 className="text-2xl font-bold mb-4 text-blue-400">
+        Registered Users
+      </h2>
       {users.length > 0 ? (
-        <ul>
+        <ul className="text-gray-300">
           {users.map((user) => (
             <li key={user.id} className="mb-2">
               ID: {user.id}, Username: {user.username}, Score: {user.score}
@@ -31,7 +33,7 @@ export default function UserList({ triggerFetch }) {
           ))}
         </ul>
       ) : (
-        <p>No users registered yet.</p>
+        <p className="text-gray-400">No users registered yet.</p>
       )}
     </div>
   );
