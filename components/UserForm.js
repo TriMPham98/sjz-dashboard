@@ -1,12 +1,14 @@
 import { useState } from "react";
 
-export default function UserForm() {
+export default function UserForm({ onUserAdded }) {
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setIsError(false);
 
     try {
       const response = await fetch("/api/addUser", {
@@ -22,11 +24,14 @@ export default function UserForm() {
       if (response.ok) {
         setMessage("User added successfully!");
         setUsername("");
+        onUserAdded();
       } else {
-        setMessage("Error: " + data.error);
+        setMessage(data.error || "An error occurred while adding the user.");
+        setIsError(true);
       }
     } catch (error) {
-      setMessage("Error: " + error.message);
+      setMessage("An error occurred while adding the user.");
+      setIsError(true);
     }
   };
 
@@ -62,7 +67,7 @@ export default function UserForm() {
       {message && (
         <p
           className={`text-center ${
-            message.includes("Error") ? "text-red-500" : "text-green-500"
+            isError ? "text-red-500" : "text-green-500"
           }`}>
           {message}
         </p>
