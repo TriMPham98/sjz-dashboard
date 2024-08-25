@@ -7,7 +7,7 @@ import UserList from "../components/UserList";
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
 
-  const handleUserAdded = () => {
+  const handleStudentAdded = () => {
     setTriggerFetch((prev) => prev + 1);
   };
 
@@ -27,7 +27,7 @@ export default function Home() {
         <p className="text-xl text-center mb-8 text-gray-300">
           Your journey to musical mastery begins here!
         </p>
-        <UserForm onUserAdded={handleUserAdded} />
+        <UserForm onUserAdded={handleStudentAdded} />
         <UserList triggerFetch={triggerFetch} />
       </main>
     </div>
