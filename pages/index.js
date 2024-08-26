@@ -6,9 +6,19 @@ import UserList from "../components/UserList";
 
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
+  const [editingUser, setEditingUser] = useState(null);
 
-  const handleStudentAdded = () => {
+  const handleUserAdded = () => {
     setTriggerFetch((prev) => prev + 1);
+  };
+
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+  };
+
+  const handleUserEdited = () => {
+    setTriggerFetch((prev) => prev + 1);
+    setEditingUser(null);
   };
 
   return (
@@ -27,8 +37,12 @@ export default function Home() {
         <p className="text-xl text-center mb-8 text-gray-300">
           Your journey to musical mastery begins here!
         </p>
-        <UserForm onUserAdded={handleStudentAdded} />
-        <UserList triggerFetch={triggerFetch} />
+        <UserForm
+          onUserAdded={handleUserAdded}
+          editingUser={editingUser}
+          onUserEdited={handleUserEdited}
+        />
+        <UserList triggerFetch={triggerFetch} onEditUser={handleEditUser} />
       </main>
     </div>
   );

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function UserForm({ onUserAdded }) {
+export default function UserForm({ onUserAdded, editingUser, onUserEdited }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [grade, setGrade] = useState("");
@@ -8,35 +8,61 @@ export default function UserForm({ onUserAdded }) {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
+  useEffect(() => {
+    if (editingUser) {
+      setFirstName(editingUser.first_name);
+      setLastName(editingUser.last_name);
+      setGrade(editingUser.grade.toString());
+      setMainInstrument(editingUser.main_instrument);
+    }
+  }, [editingUser]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     setIsError(false);
 
+    const url = editingUser ? "/api/editUser" : "/api/addUser";
+    const method = editingUser ? "PUT" : "POST";
+
     try {
-      const response = await fetch("/api/addUser", {
-        method: "POST",
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ firstName, lastName, grade, mainInstrument }),
+        body: JSON.stringify({
+          id: editingUser?.id,
+          firstName,
+          lastName,
+          grade,
+          mainInstrument,
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage("Student added successfully!");
-        setFirstName("");
-        setLastName("");
-        setGrade("");
-        setMainInstrument("");
-        onUserAdded();
+        setMessage(
+          editingUser
+            ? "Student updated successfully!"
+            : "Student added successfully!"
+        );
+        if (!editingUser) {
+          setFirstName("");
+          setLastName("");
+          setGrade("");
+          setMainInstrument("");
+          onUserAdded();
+        } else {
+          onUserEdited();
+        }
       } else {
-        setMessage(data.error || "An error occurred while adding the student.");
+        setMessage(data.error || "An error occurred");
         setIsError(true);
       }
     } catch (error) {
-      setMessage("An error occurred while adding the student.");
+      setMessage("An error occurred");
       setIsError(true);
     }
   };
@@ -118,7 +144,7 @@ export default function UserForm({ onUserAdded }) {
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit">
-            Add Student
+            {editingUser ? "Update Student" : "Add Student"}
           </button>
         </div>
       </form>
