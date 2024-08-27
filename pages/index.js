@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
       <Head>
-        <title>GrooveGamer</title>
+        <title>SJZ - Groove Gamer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -32,7 +32,7 @@ export default function Home() {
 
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-center mb-8 text-blue-400">
-          Welcome to GrooveGamer
+          Welcome to Groove Gamer
         </h1>
         <p className="text-xl text-center mb-8 text-gray-300">
           Your journey to musical mastery begins here!
