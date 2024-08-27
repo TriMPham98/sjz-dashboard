@@ -86,6 +86,7 @@ export default function UserForm({ onUserAdded, editingUser, onUserEdited }) {
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             required
+            autoComplete="off"
           />
         </div>
         <div className="mb-4">
@@ -102,6 +103,7 @@ export default function UserForm({ onUserAdded, editingUser, onUserEdited }) {
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             required
+            autoComplete="off"
           />
         </div>
         <div className="mb-4">
@@ -118,6 +120,7 @@ export default function UserForm({ onUserAdded, editingUser, onUserEdited }) {
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
             required
+            autoComplete="off"
           />
         </div>
         <div className="mb-4">
