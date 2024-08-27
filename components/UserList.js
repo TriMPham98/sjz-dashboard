@@ -81,22 +81,30 @@ export default function UserList({ triggerFetch, onEditUser }) {
           <table className="min-w-full bg-gray-700 text-white">
             <thead>
               <tr>
-                {["id", "name", "grade", "main_instrument", "score"].map(
-                  (key) => (
-                    <th
-                      key={key}
-                      className="px-4 py-2 text-left cursor-pointer hover:bg-gray-600"
-                      onClick={() => requestSort(key)}>
-                      {key.charAt(0).toUpperCase() +
-                        key.slice(1).replace("_", " ")}
-                      {sortConfig.key === key && (
-                        <span>
-                          {sortConfig.direction === "ascending" ? " ▲" : " ▼"}
-                        </span>
-                      )}
-                    </th>
-                  )
-                )}
+                {[
+                  "first_name",
+                  "last_name",
+                  "grade",
+                  "main_instrument",
+                  "score",
+                ].map((key) => (
+                  <th
+                    key={key}
+                    className="px-4 py-2 text-left cursor-pointer hover:bg-gray-600"
+                    onClick={() => requestSort(key)}>
+                    {key
+                      .split("_")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")}
+                    {sortConfig.key === key && (
+                      <span>
+                        {sortConfig.direction === "ascending" ? " ▲" : " ▼"}
+                      </span>
+                    )}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -107,8 +115,8 @@ export default function UserList({ triggerFetch, onEditUser }) {
                       selectedUserId === user.id ? "bg-gray-600" : ""
                     }`}
                     onClick={() => handleRowClick(user.id)}>
-                    <td className="px-4 py-2">{user.id}</td>
-                    <td className="px-4 py-2">{`${user.first_name} ${user.last_name}`}</td>
+                    <td className="px-4 py-2">{user.first_name}</td>
+                    <td className="px-4 py-2">{user.last_name}</td>
                     <td className="px-4 py-2">{user.grade}</td>
                     <td className="px-4 py-2">{user.main_instrument}</td>
                     <td className="px-4 py-2">{user.score}</td>
