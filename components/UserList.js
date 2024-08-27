@@ -6,6 +6,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
     key: null,
     direction: "ascending",
   });
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -31,6 +32,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
         });
         if (response.ok) {
           setUsers(users.filter((user) => user.id !== id));
+          setSelectedUserId(null);
         } else {
           throw new Error("Failed to delete user");
         }
@@ -64,6 +66,10 @@ export default function UserList({ triggerFetch, onEditUser }) {
     return sortableUsers;
   }, [users, sortConfig]);
 
+  const handleRowClick = (userId) => {
+    setSelectedUserId(selectedUserId === userId ? null : userId);
+  };
+
   return (
     <div className="mt-8 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <h2 className="text-2xl font-bold mb-4 text-blue-400">
@@ -91,30 +97,41 @@ export default function UserList({ triggerFetch, onEditUser }) {
                     </th>
                   )
                 )}
-                <th className="px-4 py-2 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
               {sortedUsers.map((user) => (
-                <tr key={user.id} className="border-t border-gray-600">
-                  <td className="px-4 py-2">{user.id}</td>
-                  <td className="px-4 py-2">{`${user.first_name} ${user.last_name}`}</td>
-                  <td className="px-4 py-2">{user.grade}</td>
-                  <td className="px-4 py-2">{user.main_instrument}</td>
-                  <td className="px-4 py-2">{user.score}</td>
-                  <td className="px-4 py-2">
-                    <button
-                      onClick={() => onEditUser(user)}
-                      className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded mr-2">
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+                <React.Fragment key={user.id}>
+                  <tr
+                    className={`border-t border-gray-600 cursor-pointer hover:bg-gray-600 ${
+                      selectedUserId === user.id ? "bg-gray-600" : ""
+                    }`}
+                    onClick={() => handleRowClick(user.id)}>
+                    <td className="px-4 py-2">{user.id}</td>
+                    <td className="px-4 py-2">{`${user.first_name} ${user.last_name}`}</td>
+                    <td className="px-4 py-2">{user.grade}</td>
+                    <td className="px-4 py-2">{user.main_instrument}</td>
+                    <td className="px-4 py-2">{user.score}</td>
+                  </tr>
+                  {selectedUserId === user.id && (
+                    <tr className="bg-gray-600">
+                      <td colSpan="5" className="px-4 py-2">
+                        <div className="flex justify-end space-x-2">
+                          <button
+                            onClick={() => onEditUser(user)}
+                            className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded">
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user.id)}
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
