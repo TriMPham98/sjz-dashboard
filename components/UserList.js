@@ -73,7 +73,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
   return (
     <div className="mt-8 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <h2 className="text-2xl font-bold mb-4 text-blue-400">
-        Registered Gamers
+        Registered Students
       </h2>
 
       {sortedUsers.length > 0 ? (
