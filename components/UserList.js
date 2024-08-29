@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 export default function UserList({ triggerFetch, onEditUser }) {
   const [users, setUsers] = useState([]);
   const [sortConfig, setSortConfig] = useState({
-    key: null,
+    key: "grade",
     direction: "ascending",
   });
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -23,6 +23,13 @@ export default function UserList({ triggerFetch, onEditUser }) {
     }
     fetchUsers();
   }, [triggerFetch]);
+
+  useEffect(() => {
+    setSortConfig({
+      key: "grade",
+      direction: "ascending",
+    });
+  }, []);
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this student?")) {
