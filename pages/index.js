@@ -41,17 +41,17 @@ export default function Home() {
           <nav>
             <button
               className={`block w-full text-left px-4 py-2 mb-2 ${
+                activeTab === "analytics" ? "bg-gray-700" : "hover:bg-gray-700"
+              }`}
+              onClick={() => setActiveTab("dashboard")}>
+              Dashboard
+            </button>
+            <button
+              className={`block w-full text-left px-4 py-2 mb-2 ${
                 activeTab === "students" ? "bg-gray-700" : "hover:bg-gray-700"
               }`}
               onClick={() => setActiveTab("students")}>
               Students
-            </button>
-            <button
-              className={`block w-full text-left px-4 py-2 mb-2 ${
-                activeTab === "analytics" ? "bg-gray-700" : "hover:bg-gray-700"
-              }`}
-              onClick={() => setActiveTab("analytics")}>
-              Analytics
             </button>
           </nav>
         </div>
@@ -94,13 +94,13 @@ export default function Home() {
               )}
             </>
           )}
-          {activeTab === "analytics" && (
+          {activeTab === "dashboard" && (
             <>
               <h1 className="text-4xl font-bold mb-8 text-blue-400">
-                Analytics
+                Dashboard
               </h1>
               <p className="text-xl text-gray-300">
-                Analytics content will be added here.
+                Dashboard content will be displayed here.
               </p>
             </>
           )}
