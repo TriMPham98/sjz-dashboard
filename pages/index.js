@@ -7,7 +7,7 @@ import UserList from "../components/UserList";
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
   const [editingUser, setEditingUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("students");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [showAddForm, setShowAddForm] = useState(false);
 
   const handleUserAdded = () => {
