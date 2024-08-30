@@ -150,12 +150,12 @@ export default function UserForm({
         </div>
         <div className="flex items-center justify-between">
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit">
             {editingUser ? "Update Student" : "Add Student"}
           </button>
           <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
             onClick={onCancel}>
             Cancel
@@ -165,7 +165,7 @@ export default function UserForm({
       {message && (
         <p
           className={`text-center ${
-            isError ? "text-red-400" : "text-green-400"
+            isError ? "text-gray-400" : "text-gray-300"
           }`}>
           {message}
         </p>

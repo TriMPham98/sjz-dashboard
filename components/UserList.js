@@ -81,7 +81,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
     <div className="mt-8 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
       {sortedUsers.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-700 text-white">
+          <table className="min-w-full bg-gray-800 text-gray-300">
             <thead>
               <tr>
                 {[
@@ -114,8 +114,8 @@ export default function UserList({ triggerFetch, onEditUser }) {
               {sortedUsers.map((user) => (
                 <React.Fragment key={user.id}>
                   <tr
-                    className={`border-t border-gray-600 cursor-pointer hover:bg-gray-600 ${
-                      selectedUserId === user.id ? "bg-gray-600" : ""
+                    className={`border-t border-gray-700 cursor-pointer hover:bg-gray-700 ${
+                      selectedUserId === user.id ? "bg-gray-700" : ""
                     }`}
                     onClick={() => handleRowClick(user.id)}>
                     <td className="px-4 py-2">{user.first_name}</td>
@@ -125,17 +125,17 @@ export default function UserList({ triggerFetch, onEditUser }) {
                     <td className="px-4 py-2">{user.score}</td>
                   </tr>
                   {selectedUserId === user.id && (
-                    <tr className="bg-gray-600">
+                    <tr className="bg-gray-700">
                       <td colSpan="5" className="px-4 py-2">
                         <div className="flex justify-end space-x-2">
                           <button
                             onClick={() => onEditUser(user)}
-                            className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded">
+                            className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-1 px-2 rounded">
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(user.id)}
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                            className="bg-gray-500 hover:bg-gray-400 text-gray-100 font-bold py-1 px-2 rounded">
                             Delete
                           </button>
                         </div>
