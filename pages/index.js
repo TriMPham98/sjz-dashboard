@@ -34,7 +34,6 @@ export default function Home() {
       <div className="flex">
         {/* Sidebar */}
         <div className="w-64 bg-gray-800 min-h-screen p-4">
-          <h2 className="text-2xl font-bold mb-4 text-blue-400">Dashboard</h2>
           <nav>
             <button
               className={`block w-full text-left px-4 py-2 mb-2 ${
