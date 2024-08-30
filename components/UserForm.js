@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 
-export default function UserForm({ onUserAdded, editingUser, onUserEdited }) {
+export default function UserForm({
+  onUserAdded,
+  editingUser,
+  onUserEdited,
+  onCancel,
+}) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [grade, setGrade] = useState("");
@@ -148,6 +153,12 @@ export default function UserForm({ onUserAdded, editingUser, onUserEdited }) {
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit">
             {editingUser ? "Update Student" : "Add Student"}
+          </button>
+          <button
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="button"
+            onClick={onCancel}>
+            Cancel
           </button>
         </div>
       </form>

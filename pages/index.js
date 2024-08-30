@@ -8,18 +8,22 @@ export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
   const [editingUser, setEditingUser] = useState(null);
   const [activeTab, setActiveTab] = useState("students");
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const handleUserAdded = () => {
     setTriggerFetch((prev) => prev + 1);
+    setShowAddForm(false);
   };
 
   const handleEditUser = (user) => {
     setEditingUser(user);
+    setShowAddForm(true);
   };
 
   const handleUserEdited = () => {
     setTriggerFetch((prev) => prev + 1);
     setEditingUser(null);
+    setShowAddForm(false);
   };
 
   return (
@@ -44,13 +48,6 @@ export default function Home() {
             </button>
             <button
               className={`block w-full text-left px-4 py-2 mb-2 ${
-                activeTab === "add-student" ? "bg-gray-700" : "hover:bg-gray-700"
-              }`}
-              onClick={() => setActiveTab("add-student")}>
-              Add Student
-            </button>
-            <button
-              className={`block w-full text-left px-4 py-2 mb-2 ${
                 activeTab === "analytics" ? "bg-gray-700" : "hover:bg-gray-700"
               }`}
               onClick={() => setActiveTab("analytics")}>
@@ -63,22 +60,38 @@ export default function Home() {
         <main className="flex-1 p-8">
           {activeTab === "students" && (
             <>
-              <h1 className="text-4xl font-bold mb-8 text-blue-400">
-                Registered Students
-              </h1>
-              <UserList triggerFetch={triggerFetch} onEditUser={handleEditUser} />
-            </>
-          )}
-          {activeTab === "add-student" && (
-            <>
-              <h1 className="text-4xl font-bold mb-8 text-blue-400">
-                {editingUser ? "Edit Student" : "Add New Student"}
-              </h1>
-              <UserForm
-                onUserAdded={handleUserAdded}
-                editingUser={editingUser}
-                onUserEdited={handleUserEdited}
-              />
+              <div className="flex justify-between items-center mb-8">
+                <h1 className="text-4xl font-bold text-blue-400">
+                  {showAddForm
+                    ? editingUser
+                      ? "Edit Student"
+                      : "Add New Student"
+                    : "Registered Students"}
+                </h1>
+                {!showAddForm && (
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => setShowAddForm(true)}>
+                    Add Student
+                  </button>
+                )}
+              </div>
+              {showAddForm ? (
+                <UserForm
+                  onUserAdded={handleUserAdded}
+                  editingUser={editingUser}
+                  onUserEdited={handleUserEdited}
+                  onCancel={() => {
+                    setShowAddForm(false);
+                    setEditingUser(null);
+                  }}
+                />
+              ) : (
+                <UserList
+                  triggerFetch={triggerFetch}
+                  onEditUser={handleEditUser}
+                />
+              )}
             </>
           )}
           {activeTab === "analytics" && (
