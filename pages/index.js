@@ -4,7 +4,6 @@ import Header from "../components/Header";
 import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
-import MonthlyCalendar from "../components/MonthlyCalendar";
 
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
