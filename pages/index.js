@@ -106,10 +106,6 @@ export default function Home() {
                 Dashboard
               </h1>
               <Dashboard />
-              <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4 text-gray-100">Monthly Calendar</h2>
-                <MonthlyCalendar />
-              </div>
             </>
           )}
         </main>
