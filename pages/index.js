@@ -26,6 +26,10 @@ export default function Home() {
     setShowAddForm(false);
   };
 
+  const handleOpenDashboard = () => {
+    setActiveTab("dashboard");
+  };
+
   return (
     <div className="min-h-screen bg-black text-gray-300">
       <Head>
@@ -33,7 +37,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header />
+      <Header onOpenDashboard={handleOpenDashboard} />
 
       <div className="flex">
         {/* Sidebar */}
