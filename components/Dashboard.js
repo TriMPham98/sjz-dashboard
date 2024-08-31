@@ -13,7 +13,7 @@ export default function Dashboard() {
           style={{borderRadius: "12px"}} 
           src="https://open.spotify.com/embed/playlist/5I4bxWhUVi9mj1Qpcb6CC5?utm_source=generator&theme=0" 
           width="100%" 
-          height="352" 
+          height="500" 
           frameBorder="0" 
           allowFullScreen="" 
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
