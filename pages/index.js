@@ -3,6 +3,8 @@ import Head from "next/head";
 import Header from "../components/Header";
 import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
+import Dashboard from "../components/Dashboard";
+import MonthlyCalendar from "../components/MonthlyCalendar";
 
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
@@ -103,9 +105,11 @@ export default function Home() {
               <h1 className="text-4xl font-bold mb-8 text-gray-100">
                 Dashboard
               </h1>
-              <p className="text-xl text-gray-400">
-                Dashboard content will be displayed here.
-              </p>
+              <Dashboard />
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-4 text-gray-100">Monthly Calendar</h2>
+                <MonthlyCalendar />
+              </div>
             </>
           )}
         </main>
