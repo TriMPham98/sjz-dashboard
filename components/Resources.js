@@ -1,41 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Resources = () => {
-  return (
-    <div>
-      <h1 className="text-4xl font-bold mb-8 text-gray-100">Resources</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <ResourceCard
-          title="Jazz Theory"
-          description="Learn the fundamentals of jazz theory and harmony."
-          link="#"
-        />
-        <ResourceCard
-          title="Rhythm Exercises"
-          description="Improve your timing and groove with these exercises."
-          link="#"
-        />
-        <ResourceCard
-          title="Instrument Techniques"
-          description="Advanced techniques for various jazz instruments."
-          link="#"
-        />
-        {/* Add more ResourceCards as needed */}
-      </div>
-    </div>
-  );
-};
+  const [isLoading, setIsLoading] = useState(true);
 
-const ResourceCard = ({ title, description, link }) => {
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+  };
+
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-2 text-gray-100">{title}</h2>
-      <p className="text-gray-300 mb-4">{description}</p>
-      <a
-        href={link}
-        className="text-blue-400 hover:text-blue-300 transition-colors duration-200">
-        Learn More →
-      </a>
+    <div className="container mx-auto px-4">
+      <h1 className="text-4xl font-bold mb-8 text-gray-100">Resources</h1>
+      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-gray-100">
+          Bridges Rock Band Enrollment Form
+        </h2>
+        <div className="relative" style={{ paddingTop: "141.42%" }}>
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          )}
+          <iframe
+            src="/BridgesRockBandEnrollment.pdf"
+            className="absolute top-0 left-0 w-full h-full"
+            style={{ border: "none" }}
+            onLoad={handleIframeLoad}
+            title="Bridges Rock Band Enrollment"></iframe>
+        </div>
+        <div className="mt-4">
+          <a
+            href="/BridgesRockBandEnrollment.pdf"
+            download
+            className="bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded">
+            Download
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
