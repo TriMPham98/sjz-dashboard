@@ -33,7 +33,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-gray-300">
+    <div className="min-h-screen bg-black text-white">
       <Head>
         <title>San Jose Jazz Progressions</title>
         <link rel="icon" href="/favicon.ico" />
@@ -43,25 +43,25 @@ export default function Home() {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-900 min-h-screen p-4 border-r border-gray-700">
+        <div className="w-64 bg-black min-h-screen p-4 border-r border-gray-800">
           <nav>
             <button
-              className={`block w-full text-left px-4 py-2 mb-2 ${
-                activeTab === "dashboard" ? "bg-gray-800" : "hover:bg-gray-800"
+              className={`block w-full text-left px-4 py-2 mb-2 rounded ${
+                activeTab === "dashboard" ? "bg-white text-black" : "hover:bg-gray-900"
               }`}
               onClick={() => setActiveTab("dashboard")}>
               Dashboard
             </button>
             <button
-              className={`block w-full text-left px-4 py-2 mb-2 ${
-                activeTab === "students" ? "bg-gray-800" : "hover:bg-gray-800"
+              className={`block w-full text-left px-4 py-2 mb-2 rounded ${
+                activeTab === "students" ? "bg-white text-black" : "hover:bg-gray-900"
               }`}
               onClick={() => setActiveTab("students")}>
               Students
             </button>
             <button
-              className={`block w-full text-left px-4 py-2 mb-2 ${
-                activeTab === "resources" ? "bg-gray-800" : "hover:bg-gray-800"
+              className={`block w-full text-left px-4 py-2 mb-2 rounded ${
+                activeTab === "resources" ? "bg-white text-black" : "hover:bg-gray-900"
               }`}
               onClick={() => setActiveTab("resources")}>
               Resources
@@ -70,7 +70,7 @@ export default function Home() {
         </div>
 
         {/* Main content */}
-        <main className="flex-1 p-8 bg-gray-900">
+        <main className="flex-1 p-8 bg-black">
           {activeTab === "students" && (
             <>
               <div className="flex justify-between items-center mb-8">

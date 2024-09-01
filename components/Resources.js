@@ -9,16 +9,16 @@ const Resources = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-4xl font-bold mb-8 text-gray-100">Resources</h1>
-      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+      <h1 className="text-4xl font-bold mb-8 text-white">Resources</h1>
+      <div className="bg-gray-900 p-6 rounded-lg shadow-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-100">
+          <h2 className="text-2xl font-bold text-white">
             Bridges Rock Band Enrollment Form
           </h2>
           <a
             href="/BridgesRockBandEnrollment.pdf"
             download
-            className="bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded">
+            className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
             Download
           </a>
         </div>

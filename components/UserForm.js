@@ -76,15 +76,15 @@ export default function UserForm({
     <div className="max-w-md mx-auto mt-8">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
         <div className="mb-4">
           <label
-            className="block text-gray-300 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
             htmlFor="firstName">
             First Name
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
             id="firstName"
             type="text"
             placeholder="Enter first name"
@@ -96,12 +96,12 @@ export default function UserForm({
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-300 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
             htmlFor="lastName">
             Last Name
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
             id="lastName"
             type="text"
             placeholder="Enter last name"
@@ -113,12 +113,12 @@ export default function UserForm({
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-300 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
             htmlFor="grade">
             Grade
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
             id="grade"
             type="number"
             placeholder="Enter grade"
@@ -130,12 +130,12 @@ export default function UserForm({
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-300 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
             htmlFor="mainInstrument">
             Main Instrument
           </label>
           <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800"
             id="mainInstrument"
             value={mainInstrument}
             onChange={(e) => setMainInstrument(e.target.value)}
@@ -150,12 +150,12 @@ export default function UserForm({
         </div>
         <div className="flex items-center justify-between">
           <button
-            className="bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit">
             {editingUser ? "Update Student" : "Add Student"}
           </button>
           <button
-            className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
             onClick={onCancel}>
             Cancel
@@ -165,7 +165,7 @@ export default function UserForm({
       {message && (
         <p
           className={`text-center ${
-            isError ? "text-gray-400" : "text-gray-300"
+            isError ? "text-gray-400" : "text-white"
           }`}>
           {message}
         </p>
