@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import Header from "../components/Header";
 import UserForm from "../components/UserForm";
@@ -11,6 +11,8 @@ export default function Home() {
   const [editingUser, setEditingUser] = useState(null);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [highlightStyle, setHighlightStyle] = useState({});
+  const tabRefs = useRef({});
 
   const handleUserAdded = () => {
     setTriggerFetch((prev) => prev + 1);
@@ -32,6 +34,22 @@ export default function Home() {
     setActiveTab("dashboard");
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
+  useEffect(() => {
+    const currentTabElement = tabRefs.current[activeTab];
+    if (currentTabElement) {
+      setHighlightStyle({
+        top: currentTabElement.offsetTop + "px",
+        height: currentTabElement.offsetHeight + "px",
+      });
+    }
+  }, [activeTab]);
+
+  const tabs = ["dashboard", "students", "resources"];
+
   return (
     <div className="min-h-screen bg-black text-white">
       <Head>
@@ -43,29 +61,30 @@ export default function Home() {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-black min-h-screen p-4 border-r border-gray-800">
-          <nav>
-            <button
-              className={`block w-full text-left px-4 py-2 mb-2 rounded ${
-                activeTab === "dashboard" ? "bg-white text-black" : "hover:bg-gray-900"
-              }`}
-              onClick={() => setActiveTab("dashboard")}>
-              Dashboard
-            </button>
-            <button
-              className={`block w-full text-left px-4 py-2 mb-2 rounded ${
-                activeTab === "students" ? "bg-white text-black" : "hover:bg-gray-900"
-              }`}
-              onClick={() => setActiveTab("students")}>
-              Students
-            </button>
-            <button
-              className={`block w-full text-left px-4 py-2 mb-2 rounded ${
-                activeTab === "resources" ? "bg-white text-black" : "hover:bg-gray-900"
-              }`}
-              onClick={() => setActiveTab("resources")}>
-              Resources
-            </button>
+        <div className="w-64 bg-black min-h-screen p-4 border-r border-gray-800 relative">
+          <div
+            className="absolute left-0 w-full bg-white rounded transition-all duration-300 ease-in-out"
+            style={{
+              ...highlightStyle,
+              width: "calc(100% - 2rem)",
+              marginLeft: "1rem",
+              zIndex: 0,
+            }}
+          />
+          <nav className="relative z-10">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                ref={(el) => (tabRefs.current[tab] = el)}
+                className={`block w-full text-left px-4 py-2 mb-2 rounded transition-colors duration-300 ${
+                  activeTab === tab
+                    ? "text-black"
+                    : "text-white hover:bg-gray-800"
+                }`}
+                onClick={() => handleTabChange(tab)}>
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
           </nav>
         </div>
 
