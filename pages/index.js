@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
+import Resources from "../components/Resources";
 
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
@@ -58,6 +59,13 @@ export default function Home() {
               onClick={() => setActiveTab("students")}>
               Students
             </button>
+            <button
+              className={`block w-full text-left px-4 py-2 mb-2 ${
+                activeTab === "resources" ? "bg-gray-800" : "hover:bg-gray-800"
+              }`}
+              onClick={() => setActiveTab("resources")}>
+              Resources
+            </button>
           </nav>
         </div>
 
@@ -107,6 +115,7 @@ export default function Home() {
               <Dashboard />
             </>
           )}
+          {activeTab === "resources" && <Resources />}
         </main>
       </div>
     </div>
