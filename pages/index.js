@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-gray-300">
       <Head>
-        <title>SJZ - Groove Gamer</title>
+        <title>San Jose Jazz Progressions</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
