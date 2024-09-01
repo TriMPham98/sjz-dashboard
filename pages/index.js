@@ -44,6 +44,7 @@ export default function Home() {
       setHighlightStyle({
         top: currentTabElement.offsetTop + "px",
         height: currentTabElement.offsetHeight + "px",
+        marginTop: "1rem",
       });
     }
   }, [activeTab]);
