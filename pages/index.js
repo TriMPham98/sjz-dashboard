@@ -49,7 +49,7 @@ export default function Home() {
     }
   }, [activeTab]);
 
-  const tabs = ["dashboard", "students", "resources"];
+  const tabs = ["dashboard", "resources", "students"];
 
   return (
     <div className="min-h-screen bg-black text-white">
