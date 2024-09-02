@@ -115,7 +115,7 @@ export default function Dashboard() {
       <style>{customCSS}</style>
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4 text-white">
-          Practice Schedule
+          Program Schedule
         </h2>
         <div
           className="w-full"
