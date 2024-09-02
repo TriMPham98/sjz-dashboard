@@ -10,76 +10,78 @@ const localizer = momentLocalizer(moment);
 const calendarStyle = {
   style: {
     height: 690,
-    color: "white",
-    backgroundColor: "black",
+    color: "#333",
+    backgroundColor: "#f0f0f0",
   },
-  dayPropGetter: (date) => ({
+  dayPropGetter: () => ({
     style: {
-      backgroundColor: "black",
-      color: "white",
-      borderColor: "#333",
+      backgroundColor: "#f0f0f0",
+      color: "#333",
+      borderColor: "#ccc",
     },
   }),
-  eventPropGetter: (event) => {
-    let backgroundColor = "#333";
-    switch (event.type) {
-      case "weekly":
-        backgroundColor = "#4a5568";
-        break;
-      case "holiday":
-        backgroundColor = "#e53e3e";
-        break;
-      case "hourly":
-        backgroundColor = "#38a169";
-        break;
-    }
-    return {
-      style: {
-        backgroundColor,
-        color: "white",
-        border: "none",
-      },
-    };
-  },
+  eventPropGetter: (event) => ({
+    style: {
+      backgroundColor:
+        event.type === "weekly"
+          ? "#d4d4d4"
+          : event.type === "holiday"
+          ? "#e0e0e0"
+          : event.type === "hourly"
+          ? "#c8c8c8"
+          : "#dcdcdc",
+      color: "#333",
+      border: "none",
+    },
+  }),
 };
 
 const customCSS = `
   .rbc-calendar {
-    background-color: black;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
   }
   .rbc-toolbar {
-    background-color: #1a202c;
-    color: white;
+    background-color: #e0e0e0;
+    color: #333;
   }
   .rbc-toolbar button {
-    color: white;
+    color: #333;
   }
   .rbc-toolbar button:hover {
-    background-color: #2d3748;
+    background-color: #d0d0d0;
   }
   .rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
-    background-color: #4a5568;
+    background-color: #c0c0c0;
   }
   .rbc-month-view, .rbc-time-view, .rbc-agenda-view {
-    background-color: black;
+    background-color: #f0f0f0;
   }
   .rbc-off-range-bg {
-    background-color: #1a202c;
+    background-color: #e8e8e8;
   }
   .rbc-today {
-    background-color: #2d3748 !important;
+    background-color: #d8d8d8 !important;
   }
   .rbc-event {
-    background-color: #4a5568;
+    background-color: #c8c8c8;
   }
   .rbc-event.rbc-selected {
-    background-color: #718096;
+    background-color: #b8b8b8;
   }
   .rbc-day-bg + .rbc-day-bg, .rbc-month-row + .rbc-month-row {
-    border-color: #4a5568;
+    border-color: #ccc;
   }
   .rbc-header, .rbc-time-header-cell {
-    color: white;
+    color: #333;
+  }
+  .rbc-header {
+    padding: 4px 0;
+    background-color: #e0e0e0;
+  }
+  .rbc-date-cell {
+    padding: 4px;
   }
 `;
 
@@ -115,7 +117,13 @@ export default function Dashboard() {
         <h2 className="text-2xl font-bold mb-4 text-white">
           Practice Schedule
         </h2>
-        <div className="w-full">
+        <div
+          className="w-full"
+          style={{
+            padding: "16px",
+            backgroundColor: "#222",
+            borderRadius: "12px",
+          }}>
           <Calendar
             localizer={localizer}
             events={events}
