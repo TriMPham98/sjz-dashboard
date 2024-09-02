@@ -6,6 +6,7 @@ import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
 import Resources from "../components/Resources";
 import Footer from "../components/Footer";
+import PasswordPopup from "../components/PasswordPopup";
 
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
@@ -13,6 +14,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showAddForm, setShowAddForm] = useState(false);
   const [highlightStyle, setHighlightStyle] = useState({});
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const tabRefs = useRef({});
 
   const handleUserAdded = () => {
@@ -37,6 +39,19 @@ export default function Home() {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+  };
+
+  const handleAddStudentClick = () => {
+    setShowPasswordPopup(true);
+  };
+
+  const handlePasswordSubmit = (password) => {
+    if (password === "onDeals") {
+      setShowPasswordPopup(false);
+      setShowAddForm(true);
+    } else {
+      alert("Incorrect password. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -105,7 +120,7 @@ export default function Home() {
                 {!showAddForm && (
                   <button
                     className="bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded"
-                    onClick={() => setShowAddForm(true)}>
+                    onClick={handleAddStudentClick}>
                     Add Student
                   </button>
                 )}
@@ -141,6 +156,13 @@ export default function Home() {
       </div>
 
       <Footer />
+
+      {showPasswordPopup && (
+        <PasswordPopup
+          onSubmit={handlePasswordSubmit}
+          onCancel={() => setShowPasswordPopup(false)}
+        />
+      )}
     </div>
   );
 }
