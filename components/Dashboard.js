@@ -8,22 +8,45 @@ const localizer = momentLocalizer(moment);
 // Sample events - replace with your actual events
 const events = [
   {
-    start: new Date(),
-    end: new Date(moment().add(1, "hours")),
+    start: new Date(2024, 8, 1), // September 1, 2024
+    end: new Date(2024, 8, 1),
     title: "Practice Session",
   },
   {
-    start: new Date(moment().add(2, "days")),
-    end: new Date(moment().add(2, "days").add(2, "hours")),
+    start: new Date(2024, 8, 3), // September 3, 2024
+    end: new Date(2024, 8, 3),
     title: "Band Rehearsal",
   },
 ];
 
+// Custom styling for the calendar
+const calendarStyle = {
+  style: {
+    height: 500,
+    color: "white",
+    backgroundColor: "black",
+  },
+  dayPropGetter: () => ({
+    style: {
+      backgroundColor: "black",
+      color: "white",
+      borderColor: "#333",
+    },
+  }),
+  eventPropGetter: () => ({
+    style: {
+      backgroundColor: "#333",
+      color: "white",
+      border: "none",
+    },
+  }),
+};
+
 export default function Dashboard() {
   return (
-    <div>
+    <div className="bg-black text-white">
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4 text-gray-100">
+        <h2 className="text-2xl font-bold mb-4 text-white">
           Songs We're Learning
         </h2>
         <iframe
@@ -37,7 +60,7 @@ export default function Dashboard() {
           loading="lazy"></iframe>
       </div>
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4 text-gray-100">
+        <h2 className="text-2xl font-bold mb-4 text-white">
           Practice Schedule
         </h2>
         <Calendar
@@ -45,7 +68,7 @@ export default function Dashboard() {
           events={events}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 500 }}
+          {...calendarStyle}
         />
       </div>
     </div>
