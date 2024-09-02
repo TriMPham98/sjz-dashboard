@@ -5,6 +5,7 @@ import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
 import Resources from "../components/Resources";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const [triggerFetch, setTriggerFetch] = useState(0);
@@ -52,7 +53,7 @@ export default function Home() {
   const tabs = ["dashboard", "resources", "students"];
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       <Head>
         <title>San Jose Jazz Progressions</title>
         <link rel="icon" href="/favicon.ico" />
@@ -60,7 +61,7 @@ export default function Home() {
 
       <Header onOpenDashboard={handleOpenDashboard} />
 
-      <div className="flex">
+      <div className="flex flex-1">
         {/* Sidebar */}
         <div className="w-64 bg-black min-h-screen p-4 border-r border-gray-800 relative">
           <div
@@ -138,6 +139,8 @@ export default function Home() {
           {activeTab === "resources" && <Resources />}
         </main>
       </div>
+
+      <Footer />
     </div>
   );
 }
