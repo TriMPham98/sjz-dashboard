@@ -1,7 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const PasswordPopup = ({ onSubmit, onCancel }) => {
   const [password, setPassword] = useState("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,6 +28,7 @@ const PasswordPopup = ({ onSubmit, onCancel }) => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 mb-4 bg-gray-900 text-white rounded border border-gray-700 focus:outline-none focus:border-gray-500"
             placeholder="Enter password"
+            ref={inputRef}
           />
           <div className="flex justify-end">
             <button

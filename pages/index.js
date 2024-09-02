@@ -15,22 +15,26 @@ export default function Home() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [highlightStyle, setHighlightStyle] = useState({});
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [triggerInputFocus, setTriggerInputFocus] = useState(false);
   const tabRefs = useRef({});
 
   const handleUserAdded = () => {
     setTriggerFetch((prev) => prev + 1);
     setShowAddForm(false);
+    setTriggerInputFocus(false);
   };
 
   const handleEditUser = (user) => {
     setEditingUser(user);
     setShowAddForm(true);
+    setTriggerInputFocus(true);
   };
 
   const handleUserEdited = () => {
     setTriggerFetch((prev) => prev + 1);
     setEditingUser(null);
     setShowAddForm(false);
+    setTriggerInputFocus(false);
   };
 
   const handleOpenDashboard = () => {
@@ -49,6 +53,7 @@ export default function Home() {
     if (password === "onDeals") {
       setShowPasswordPopup(false);
       setShowAddForm(true);
+      setTriggerInputFocus(true);
     } else {
       alert("Incorrect password. Please try again.");
     }
@@ -133,7 +138,9 @@ export default function Home() {
                   onCancel={() => {
                     setShowAddForm(false);
                     setEditingUser(null);
+                    setTriggerInputFocus(false);
                   }}
+                  triggerInputFocus={triggerInputFocus}
                 />
               ) : (
                 <UserList
