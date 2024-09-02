@@ -1,28 +1,15 @@
 import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
+import { useEvents } from "../data/events";
+
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
 
-// Sample events - replace with your actual events
-const events = [
-  {
-    start: new Date(2024, 8, 1), // September 1, 2024
-    end: new Date(2024, 8, 1),
-    title: "Practice Session",
-  },
-  {
-    start: new Date(2024, 8, 3), // September 3, 2024
-    end: new Date(2024, 8, 3),
-    title: "Band Rehearsal",
-  },
-];
-
-// Custom styling for the calendar
 const calendarStyle = {
   style: {
-    height: 500,
+    height: 600,
     color: "white",
     backgroundColor: "black",
   },
@@ -33,77 +20,122 @@ const calendarStyle = {
       borderColor: "#333",
     },
   }),
-  eventPropGetter: () => ({
-    style: {
-      backgroundColor: "#333",
-      color: "white",
-      border: "none",
-    },
-  }),
+  eventPropGetter: (event) => {
+    let backgroundColor = "#333";
+    switch (event.type) {
+      case "weekly":
+        backgroundColor = "#4a5568";
+        break;
+      case "holiday":
+        backgroundColor = "#e53e3e";
+        break;
+      case "hourly":
+        backgroundColor = "#38a169";
+        break;
+    }
+    return {
+      style: {
+        backgroundColor,
+        color: "white",
+        border: "none",
+      },
+    };
+  },
 };
 
-// Custom CSS to override default styles
 const customCSS = `
-  .rbc-today {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    font-weight: bold;
+  .rbc-calendar {
+    background-color: black;
   }
-  .rbc-today .rbc-button-link {
-    color: white !important;
-  }
-  .rbc-off-range-bg {
-    background-color: #111 !important;
-  }
-  .rbc-header {
-    background-color: #222;
-    border-bottom: 1px solid #333;
-  }
-  .rbc-btn-group button {
+  .rbc-toolbar {
+    background-color: #1a202c;
     color: white;
-    background-color: #333;
-    border-color: #444;
   }
-  .rbc-btn-group button:hover {
-    background-color: #444;
+  .rbc-toolbar button {
+    color: white;
   }
-  .rbc-btn-group button.rbc-active {
-    background-color: #555;
+  .rbc-toolbar button:hover {
+    background-color: #2d3748;
+  }
+  .rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
+    background-color: #4a5568;
   }
   .rbc-month-view, .rbc-time-view, .rbc-agenda-view {
-    border: 1px solid #333;
+    background-color: black;
   }
-  .rbc-month-row + .rbc-month-row {
-    border-top: 1px solid #333;
+  .rbc-off-range-bg {
+    background-color: #1a202c;
   }
-  .rbc-day-bg + .rbc-day-bg {
-    border-left: 1px solid #333;
+  .rbc-today {
+    background-color: #2d3748 !important;
+  }
+  .rbc-event {
+    background-color: #4a5568;
+  }
+  .rbc-event.rbc-selected {
+    background-color: #718096;
+  }
+  .rbc-day-bg + .rbc-day-bg, .rbc-month-row + .rbc-month-row {
+    border-color: #4a5568;
+  }
+  .rbc-header, .rbc-time-header-cell {
+    color: white;
   }
 `;
 
 export default function Dashboard() {
+  const { events, addEvent, updateEvent, deleteEvent } = useEvents();
+
+  const handleSelectSlot = ({ start, end }) => {
+    const title = window.prompt("New Event name");
+    if (title) {
+      addEvent({ start, end, title, type: "regular" });
+    }
+  };
+
+  const handleSelectEvent = (event) => {
+    const action = window.prompt(
+      'Enter "edit" to edit, or "delete" to remove',
+      "edit"
+    );
+    if (action === "edit") {
+      const title = window.prompt("Enter new title", event.title);
+      if (title) {
+        updateEvent({ ...event, title });
+      }
+    } else if (action === "delete") {
+      deleteEvent(event.id);
+    }
+  };
+
   return (
-    <div className="bg-black text-white">
+    <div className="bg-black text-white p-4">
       <style>{customCSS}</style>
-      <div className="mt-8"></div>
-      <div className="mt-8">
+      <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4 text-white">
           Practice Schedule
         </h2>
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          {...calendarStyle}
-        />
-        <div className="mt-8"></div>
+        <div className="w-full">
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            onSelectSlot={handleSelectSlot}
+            onSelectEvent={handleSelectEvent}
+            selectable
+            {...calendarStyle}
+          />
+        </div>
+      </div>
+      <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4 text-white">
           Songs We're Learning
         </h2>
         <iframe
           style={{ borderRadius: "12px" }}
           src="https://open.spotify.com/embed/playlist/5I4bxWhUVi9mj1Qpcb6CC5?utm_source=generator&theme=0"
-          width="50%"
+          width="100%"
           height="500"
           frameBorder="0"
           allowFullScreen=""
