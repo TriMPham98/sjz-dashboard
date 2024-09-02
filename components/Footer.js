@@ -7,8 +7,10 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-evenly items-start">
           <div className="mb-4 md:mb-0">
             <h3 className="text-xl font-bold mb-2">Instructor Contacts</h3>
-            <p>Tri Pham - trip@sanjosejazz.com</p>
-            <p>Rey Rafanan - reyr@sanjosejazz.org</p>
+            <ul className="space-y-2">
+              <li>Tri Pham - trip@sanjosejazz.com</li>
+              <li>Rey Rafanan - reyr@sanjosejazz.org</li>
+            </ul>
           </div>
           <div>
             <h3 className="text-xl font-bold mb-2">Links</h3>
