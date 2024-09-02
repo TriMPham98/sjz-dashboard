@@ -12,7 +12,7 @@ const Resources = () => {
       <h1 className="text-4xl font-bold mb-8 text-white">Resources</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-gray-900 p-6 rounded-lg shadow-md">
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">
               Bridges Rock Band Enrollment Form
@@ -39,7 +39,7 @@ const Resources = () => {
           </div>
         </div>
 
-        <div className="bg-gray-900 p-6 rounded-lg shadow-md flex flex-col">
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800 flex flex-col">
           <h2 className="text-2xl font-bold mb-4 text-white">
             Songs We're Learning
           </h2>
