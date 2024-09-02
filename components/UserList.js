@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PasswordPopup from "./PasswordPopup";
 
 export default function UserList({ triggerFetch, onEditUser }) {
   const [users, setUsers] = useState([]);
@@ -7,6 +8,9 @@ export default function UserList({ triggerFetch, onEditUser }) {
     direction: "ascending",
   });
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [passwordAction, setPasswordAction] = useState(null);
+  const [actionUser, setActionUser] = useState(null);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -24,37 +28,41 @@ export default function UserList({ triggerFetch, onEditUser }) {
     fetchUsers();
   }, [triggerFetch]);
 
-  useEffect(() => {
-    setSortConfig({
-      key: "grade",
-      direction: "ascending",
-    });
-  }, []);
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this student?")) {
-      try {
-        const response = await fetch(`/api/deleteUser?id=${id}`, {
-          method: "DELETE",
-        });
-        if (response.ok) {
-          setUsers(users.filter((user) => user.id !== id));
-          setSelectedUserId(null);
-        } else {
-          throw new Error("Failed to delete user");
-        }
-      } catch (error) {
-        console.error("Error deleting user:", error);
-      }
-    }
+  const handleEdit = (user) => {
+    setActionUser(user);
+    setPasswordAction("edit");
+    setShowPasswordPopup(true);
   };
 
-  const requestSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
+  const handleDelete = (user) => {
+    setActionUser(user);
+    setPasswordAction("delete");
+    setShowPasswordPopup(true);
+  };
+
+  const handlePasswordSubmit = async (password) => {
+    if (password === "onDeals") {
+      setShowPasswordPopup(false);
+      if (passwordAction === "edit") {
+        onEditUser(actionUser);
+      } else if (passwordAction === "delete") {
+        try {
+          const response = await fetch(`/api/deleteUser?id=${actionUser.id}`, {
+            method: "DELETE",
+          });
+          if (response.ok) {
+            setUsers(users.filter((user) => user.id !== actionUser.id));
+            setSelectedUserId(null);
+          } else {
+            throw new Error("Failed to delete user");
+          }
+        } catch (error) {
+          console.error("Error deleting user:", error);
+        }
+      }
+    } else {
+      alert("Incorrect password. Please try again.");
     }
-    setSortConfig({ key, direction });
   };
 
   const sortedUsers = React.useMemo(() => {
@@ -129,12 +137,12 @@ export default function UserList({ triggerFetch, onEditUser }) {
                       <td colSpan="5" className="px-4 py-2">
                         <div className="flex justify-end space-x-2">
                           <button
-                            onClick={() => onEditUser(user)}
+                            onClick={() => handleEdit(user)}
                             className="bg-white hover:bg-gray-200 text-black font-bold py-1 px-2 rounded">
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(user.id)}
+                            onClick={() => handleDelete(user)}
                             className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded">
                             Delete
                           </button>
@@ -149,6 +157,12 @@ export default function UserList({ triggerFetch, onEditUser }) {
         </div>
       ) : (
         <p className="text-gray-400">No students registered yet.</p>
+      )}
+      {showPasswordPopup && (
+        <PasswordPopup
+          onSubmit={handlePasswordSubmit}
+          onCancel={() => setShowPasswordPopup(false)}
+        />
       )}
     </div>
   );
