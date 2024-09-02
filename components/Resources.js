@@ -10,7 +10,8 @@ const Resources = () => {
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-4xl font-bold mb-8 text-white">Resources</h1>
-      <div className="bg-gray-900 p-6 rounded-lg shadow-md">
+
+      <div className="bg-gray-900 p-6 rounded-lg shadow-md mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-white">
             Bridges Rock Band Enrollment Form
@@ -35,6 +36,21 @@ const Resources = () => {
             onLoad={handleIframeLoad}
             title="Bridges Rock Band Enrollment"></iframe>
         </div>
+      </div>
+
+      <div className="bg-gray-900 p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-white">
+          Songs We're Learning
+        </h2>
+        <iframe
+          style={{ borderRadius: "12px" }}
+          src="https://open.spotify.com/embed/playlist/5I4bxWhUVi9mj1Qpcb6CC5?utm_source=generator&theme=0"
+          width="100%"
+          height="500"
+          frameBorder="0"
+          allowFullScreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"></iframe>
       </div>
     </div>
   );
