@@ -9,7 +9,7 @@ const localizer = momentLocalizer(moment);
 
 const calendarStyle = {
   style: {
-    height: 690,
+    height: 800,
     color: "#333",
     backgroundColor: "#f0f0f0",
   },
