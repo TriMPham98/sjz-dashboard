@@ -77,7 +77,7 @@ const customCSS = `
     color: #333;
   }
   .rbc-header {
-    padding: 4px 0;
+    padding: 4px 0 16px; /* Increased bottom padding */
     background-color: #e0e0e0;
   }
   .rbc-date-cell {
@@ -114,9 +114,7 @@ export default function Dashboard() {
     <div className="bg-black text-white p-4">
       <style>{customCSS}</style>
       <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-4 text-white">
-          Program Schedule
-        </h2>
+        <h2 className="text-2xl font-bold mb-4 text-white">Program Schedule</h2>
         <div
           className="w-full"
           style={{
@@ -136,8 +134,7 @@ export default function Dashboard() {
           />
         </div>
       </div>
-      <div className="mt-8">
-      </div>
+      <div className="mt-8"></div>
     </div>
   );
 }
