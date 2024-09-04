@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Vex from "vexflow";
 
 const VF = Vex.Flow;
 
 const notes = ["C", "D", "E", "F", "G", "A", "B"];
-const octaves = [3, 4, 5]; // Changed to only include octaves 3, 4, and 5
+const octaves = [3, 4, 5];
 
 const GrandStaffQuiz = () => {
   const [currentNote, setCurrentNote] = useState(null);
   const [options, setOptions] = useState([]);
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     generateNewQuestion();
@@ -31,7 +32,7 @@ const GrandStaffQuiz = () => {
       };
     } while (
       (correctNote.octave === 3 && correctNote.note < "C") ||
-      (correctNote.octave === 5 && correctNote.note > "C") // Changed condition for the upper limit
+      (correctNote.octave === 5 && correctNote.note > "C")
     );
 
     setCurrentNote(correctNote);
@@ -54,7 +55,7 @@ const GrandStaffQuiz = () => {
         wrongOctave = octaves[Math.floor(Math.random() * octaves.length)];
       } while (
         (wrongOctave === 3 && wrongNote < "C") ||
-        (wrongOctave === 5 && wrongNote > "C") // Changed condition for the upper limit
+        (wrongOctave === 5 && wrongNote > "C")
       );
 
       const option = `${wrongNote}${wrongOctave}`;
@@ -100,7 +101,6 @@ const GrandStaffQuiz = () => {
       duration: "w",
     });
 
-    // Add ledger lines if necessary
     if (isOnTrebleStaff) {
       if (currentNote.octave === 5 && currentNote.note === "C") {
         note.addModifier(new VF.Annotation("").setPosition(3));
@@ -132,6 +132,9 @@ const GrandStaffQuiz = () => {
     if (guess === correctAnswer) {
       setFeedback("Correct!");
       setScore(score + 1);
+      if (audioRef.current) {
+        audioRef.current.play();
+      }
     } else {
       setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
     }
@@ -155,6 +158,7 @@ const GrandStaffQuiz = () => {
       </div>
       <p className="text-center font-semibold">{feedback}</p>
       <p className="text-center font-semibold">Score: {score}</p>
+      <audio ref={audioRef} src="/success.mp3" />
     </div>
   );
 };
