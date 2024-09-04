@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import GrandStaffQuiz from "./GrandStaffQuiz";
 
 const Resources = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +55,13 @@ const Resources = () => {
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               loading="lazy"></iframe>
           </div>
+        </div>
+
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
+          <h2 className="text-2xl font-bold mb-4 text-white">
+            Grand Staff Note Quiz
+          </h2>
+          <GrandStaffQuiz />
         </div>
       </div>
     </div>
