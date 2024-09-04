@@ -15,7 +15,8 @@
     "react-big-calendar": "^1.13.4",
     "react-dom": "^18",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "vexflow": "^4.2.5"
   },
   "devDependencies": {
     "eslint": "^8",
