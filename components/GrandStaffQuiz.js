@@ -4,7 +4,7 @@ import Vex from "vexflow";
 const VF = Vex.Flow;
 
 const notes = ["C", "D", "E", "F", "G", "A", "B"];
-const octaves = [3, 4, 5, 6];
+const octaves = [3, 4, 5]; // Changed to only include octaves 3, 4, and 5
 
 const GrandStaffQuiz = () => {
   const [currentNote, setCurrentNote] = useState(null);
@@ -31,7 +31,7 @@ const GrandStaffQuiz = () => {
       };
     } while (
       (correctNote.octave === 3 && correctNote.note < "C") ||
-      (correctNote.octave === 6 && correctNote.note > "C")
+      (correctNote.octave === 5 && correctNote.note > "C") // Changed condition for the upper limit
     );
 
     setCurrentNote(correctNote);
@@ -54,7 +54,7 @@ const GrandStaffQuiz = () => {
         wrongOctave = octaves[Math.floor(Math.random() * octaves.length)];
       } while (
         (wrongOctave === 3 && wrongNote < "C") ||
-        (wrongOctave === 6 && wrongNote > "C")
+        (wrongOctave === 5 && wrongNote > "C") // Changed condition for the upper limit
       );
 
       const option = `${wrongNote}${wrongOctave}`;
@@ -102,7 +102,7 @@ const GrandStaffQuiz = () => {
 
     // Add ledger lines if necessary
     if (isOnTrebleStaff) {
-      if (currentNote.octave === 6 && currentNote.note === "C") {
+      if (currentNote.octave === 5 && currentNote.note === "C") {
         note.addModifier(new VF.Annotation("").setPosition(3));
       } else if (
         currentNote.octave === 4 &&
@@ -111,10 +111,7 @@ const GrandStaffQuiz = () => {
         note.addModifier(new VF.Annotation("").setPosition(1));
       }
     } else {
-      if (
-        currentNote.octave === 5 ||
-        (currentNote.octave === 4 && ["A", "B"].includes(currentNote.note))
-      ) {
+      if (currentNote.octave === 4 && ["A", "B"].includes(currentNote.note)) {
         note.addModifier(new VF.Annotation("").setPosition(3));
       } else if (currentNote.octave === 3 && currentNote.note === "C") {
         note.addModifier(new VF.Annotation("").setPosition(1));
@@ -138,13 +135,13 @@ const GrandStaffQuiz = () => {
     } else {
       setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
     }
-    setTimeout(generateNewQuestion, 1500);
+    setTimeout(generateNewQuestion, 1000);
   };
 
   return (
     <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
       <h2 className="text-xl font-bold text-center">Grand Staff Note Quiz</h2>
-      <p className="text-center text-sm">Range: C3 to C6</p>
+      <p className="text-center text-sm">Range: C3 to C5</p>
       <div id="staff" className="w-full h-48 bg-gray-100"></div>
       <div className="grid grid-cols-2 gap-2">
         {options.map((option, index) => (
