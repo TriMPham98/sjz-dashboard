@@ -4,16 +4,16 @@ import Vex from "vexflow";
 const VF = Vex.Flow;
 
 const notes = ["C", "D", "E", "F", "G", "A", "B"];
-const octaves = [3, 4, 5];
+const octaves = [2, 3, 4, 5, 6]; // Extended range to include more ledger lines
 
 const GrandStaffQuiz = () => {
   const [currentNote, setCurrentNote] = useState(null);
-  const [userGuess, setUserGuess] = useState("");
+  const [options, setOptions] = useState([]);
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
 
   useEffect(() => {
-    generateNewNote();
+    generateNewQuestion();
   }, []);
 
   useEffect(() => {
@@ -22,10 +22,43 @@ const GrandStaffQuiz = () => {
     }
   }, [currentNote]);
 
-  const generateNewNote = () => {
-    const randomNote = notes[Math.floor(Math.random() * notes.length)];
-    const randomOctave = octaves[Math.floor(Math.random() * octaves.length)];
-    setCurrentNote({ note: randomNote, octave: randomOctave });
+  const generateNewQuestion = () => {
+    const correctNote = {
+      note: notes[Math.floor(Math.random() * notes.length)],
+      octave: octaves[Math.floor(Math.random() * octaves.length)],
+    };
+    setCurrentNote(correctNote);
+
+    const newOptions = [
+      `${correctNote.note}${correctNote.octave}`,
+      ...generateWrongOptions(correctNote),
+    ];
+    shuffleArray(newOptions);
+    setOptions(newOptions);
+    setFeedback("");
+  };
+
+  const generateWrongOptions = (correctNote) => {
+    const wrongOptions = [];
+    while (wrongOptions.length < 3) {
+      const wrongNote = notes[Math.floor(Math.random() * notes.length)];
+      const wrongOctave = octaves[Math.floor(Math.random() * octaves.length)];
+      const option = `${wrongNote}${wrongOctave}`;
+      if (
+        option !== `${correctNote.note}${correctNote.octave}` &&
+        !wrongOptions.includes(option)
+      ) {
+        wrongOptions.push(option);
+      }
+    }
+    return wrongOptions;
+  };
+
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
   };
 
   const drawStaff = () => {
@@ -50,6 +83,19 @@ const GrandStaffQuiz = () => {
       duration: "w",
     });
 
+    // Add ledger lines if necessary
+    if (
+      currentNote.octave >= 6 ||
+      (currentNote.octave === 5 && ["A", "B"].includes(currentNote.note))
+    ) {
+      note.addModifier(new VF.Annotation("").setPosition(3));
+    } else if (
+      currentNote.octave <= 2 ||
+      (currentNote.octave === 3 && ["C", "D"].includes(currentNote.note))
+    ) {
+      note.addModifier(new VF.Annotation("").setPosition(1));
+    }
+
     const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
     voice.addTickables([note]);
 
@@ -59,35 +105,30 @@ const GrandStaffQuiz = () => {
     voice.draw(context, currentNote.octave >= 4 ? trebleStaff : bassStaff);
   };
 
-  const handleGuess = () => {
+  const handleGuess = (guess) => {
     const correctAnswer = `${currentNote.note}${currentNote.octave}`;
-    if (userGuess.toUpperCase() === correctAnswer) {
+    if (guess === correctAnswer) {
       setFeedback("Correct!");
       setScore(score + 1);
     } else {
       setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
     }
-    setUserGuess("");
-    generateNewNote();
+    setTimeout(generateNewQuestion, 1500);
   };
 
   return (
     <div className="p-4 max-w-md mx-auto bg-gray-800 rounded-xl shadow-md space-y-4 text-white">
       <h2 className="text-xl font-bold text-center">Grand Staff Note Quiz</h2>
       <div id="staff" className="w-full h-48 bg-gray-700"></div>
-      <div className="flex space-x-2">
-        <input
-          type="text"
-          value={userGuess}
-          onChange={(e) => setUserGuess(e.target.value)}
-          placeholder="Enter note (e.g., C4)"
-          className="flex-grow px-3 py-2 border rounded text-black"
-        />
-        <button
-          onClick={handleGuess}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Guess
-        </button>
+      <div className="grid grid-cols-2 gap-2">
+        {options.map((option, index) => (
+          <button
+            key={index}
+            onClick={() => handleGuess(option)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            {option}
+          </button>
+        ))}
       </div>
       <p className="text-center">{feedback}</p>
       <p className="text-center">Score: {score}</p>
