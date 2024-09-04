@@ -11,7 +11,8 @@ const GrandStaffQuiz = () => {
   const [options, setOptions] = useState([]);
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
-  const audioRef = useRef(null);
+  const successAudioRef = useRef(null);
+  const errorAudioRef = useRef(null);
 
   useEffect(() => {
     generateNewQuestion();
@@ -132,11 +133,14 @@ const GrandStaffQuiz = () => {
     if (guess === correctAnswer) {
       setFeedback("Correct!");
       setScore(score + 1);
-      if (audioRef.current) {
-        audioRef.current.play();
+      if (successAudioRef.current) {
+        successAudioRef.current.play();
       }
     } else {
       setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
+      if (errorAudioRef.current) {
+        errorAudioRef.current.play();
+      }
     }
     setTimeout(generateNewQuestion, 1000);
   };
@@ -158,7 +162,8 @@ const GrandStaffQuiz = () => {
       </div>
       <p className="text-center font-semibold">{feedback}</p>
       <p className="text-center font-semibold">Score: {score}</p>
-      <audio ref={audioRef} src="/success.mp3" />
+      <audio ref={successAudioRef} src="/success.mp3" />
+      <audio ref={errorAudioRef} src="/error.mp3" />
     </div>
   );
 };
