@@ -227,7 +227,7 @@ const GrandStaffQuiz = () => {
         errorAudioRef.current.play();
       }
     }
-    setTimeout(generateNewQuestion, 1000);
+    setTimeout(generateNewQuestion, 500);
   };
 
   const getScoreDisplay = () => {
