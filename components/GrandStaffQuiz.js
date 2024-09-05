@@ -106,7 +106,9 @@ const GrandStaffQuiz = () => {
         throw new Error("Failed to fetch students");
       }
       const data = await response.json();
-      setStudents(data);
+      // Sort students by score in descending order
+      const sortedStudents = data.sort((a, b) => b.score - a.score);
+      setStudents(sortedStudents);
     } catch (error) {
       console.error("Error fetching students:", error);
     }
