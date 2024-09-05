@@ -6,6 +6,55 @@ const VF = Vex.Flow;
 const notes = ["C", "D", "E", "F", "G", "A", "B"];
 const octaves = [3, 4];
 
+const PasswordPopup = ({ onSubmit, onCancel }) => {
+  const [password, setPassword] = useState("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(password);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
+      <div className="bg-black p-8 rounded-lg shadow-lg border border-gray-800">
+        <h2 className="text-2xl font-bold mb-4 text-white">
+          Enter Admin Password
+        </h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 mb-4 bg-gray-900 text-white rounded border border-gray-700 focus:outline-none focus:border-gray-500"
+            placeholder="Enter password"
+            ref={inputRef}
+          />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="mr-2 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 focus:outline-none">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 focus:outline-none">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const GrandStaffQuiz = () => {
   const [currentNote, setCurrentNote] = useState(null);
   const [options, setOptions] = useState([]);
@@ -19,6 +68,8 @@ const GrandStaffQuiz = () => {
   const timerRef = useRef(null);
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [tempStudentSelection, setTempStudentSelection] = useState(null);
 
   useEffect(() => {
     fetchStudents();
@@ -246,6 +297,30 @@ const GrandStaffQuiz = () => {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  const handleStudentChange = (e) => {
+    const newStudentId = parseInt(e.target.value);
+    if (newStudentId !== selectedStudent?.id) {
+      setTempStudentSelection(students.find((s) => s.id === newStudentId));
+      setShowPasswordPopup(true);
+    }
+  };
+
+  const handlePasswordSubmit = (password) => {
+    // In a real application, you would validate the password against a secure backend
+    if (password === "onDeals") {
+      setSelectedStudent(tempStudentSelection);
+      setShowPasswordPopup(false);
+    } else {
+      alert("Incorrect password");
+    }
+    setTempStudentSelection(null);
+  };
+
+  const handlePasswordCancel = () => {
+    setShowPasswordPopup(false);
+    setTempStudentSelection(null);
+  };
+
   return (
     <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
       <h2 className="text-xl font-bold text-center">
@@ -260,11 +335,7 @@ const GrandStaffQuiz = () => {
         <select
           id="student-select"
           value={selectedStudent ? selectedStudent.id : ""}
-          onChange={(e) =>
-            setSelectedStudent(
-              students.find((s) => s.id === parseInt(e.target.value))
-            )
-          }
+          onChange={handleStudentChange}
           className="w-full p-2 border rounded">
           <option value="">Select a student</option>
           {students.map((student) => (
@@ -306,6 +377,13 @@ const GrandStaffQuiz = () => {
       </div>
       <audio ref={successAudioRef} src="/success.mp3" />
       <audio ref={errorAudioRef} src="/error.mp3" />
+
+      {showPasswordPopup && (
+        <PasswordPopup
+          onSubmit={handlePasswordSubmit}
+          onCancel={handlePasswordCancel}
+        />
+      )}
     </div>
   );
 };
