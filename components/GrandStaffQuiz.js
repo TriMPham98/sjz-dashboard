@@ -17,6 +17,12 @@ const GrandStaffQuiz = () => {
   const successAudioRef = useRef(null);
   const errorAudioRef = useRef(null);
   const timerRef = useRef(null);
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
   useEffect(() => {
     if (isActive) {
@@ -40,6 +46,19 @@ const GrandStaffQuiz = () => {
     }
     return () => clearTimeout(timerRef.current);
   }, [isActive, timeLeft]);
+
+  const fetchStudents = async () => {
+    try {
+      const response = await fetch("/api/checkUsers");
+      if (!response.ok) {
+        throw new Error("Failed to fetch students");
+      }
+      const data = await response.json();
+      setStudents(data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  };
 
   const generateNewQuestion = () => {
     let correctNote;
@@ -167,6 +186,10 @@ const GrandStaffQuiz = () => {
   };
 
   const startGame = () => {
+    if (!selectedStudent) {
+      alert("Please select a student before starting the game.");
+      return;
+    }
     setIsActive(true);
     setTimeLeft(60);
     setScore(0);
@@ -174,10 +197,47 @@ const GrandStaffQuiz = () => {
     setFeedback("");
   };
 
-  const endGame = () => {
+  const endGame = async () => {
     setIsActive(false);
     setFeedback(`Time's up! Your final score is ${getScoreDisplay()}.`);
     clearTimeout(timerRef.current);
+
+    if (selectedStudent && score > selectedStudent.score) {
+      try {
+        const response = await fetch("/api/updateScore", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: selectedStudent.id,
+            score: score,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update score");
+        }
+
+        setFeedback(
+          `Congratulations! You beat your high score. New high score: ${score}`
+        );
+        // Update the local state
+        setStudents(
+          students.map((student) =>
+            student.id === selectedStudent.id
+              ? { ...student, score: score }
+              : student
+          )
+        );
+        setSelectedStudent({ ...selectedStudent, score: score });
+      } catch (error) {
+        console.error("Error updating score:", error);
+        setFeedback(
+          `Your score: ${score}. Failed to update high score. Please try again later.`
+        );
+      }
+    }
   };
 
   const formatTime = (seconds) => {
@@ -192,6 +252,30 @@ const GrandStaffQuiz = () => {
         Test Your Note Reading Skills!
       </h2>
       <p className="text-center text-sm">Range: C3 to G4</p>
+
+      <div className="mb-4">
+        <label htmlFor="student-select" className="block mb-2">
+          Select Student:
+        </label>
+        <select
+          id="student-select"
+          value={selectedStudent ? selectedStudent.id : ""}
+          onChange={(e) =>
+            setSelectedStudent(
+              students.find((s) => s.id === parseInt(e.target.value))
+            )
+          }
+          className="w-full p-2 border rounded">
+          <option value="">Select a student</option>
+          {students.map((student) => (
+            <option key={student.id} value={student.id}>
+              {student.first_name} {student.last_name} (High Score:{" "}
+              {student.score})
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div id="staff" className="w-full h-48 bg-gray-100"></div>
       <div className="grid grid-cols-2 gap-2">
         {options.map((option, index) => (
