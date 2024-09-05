@@ -12,18 +12,34 @@ const GrandStaffQuiz = () => {
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
   const [totalGuesses, setTotalGuesses] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [isActive, setIsActive] = useState(false);
   const successAudioRef = useRef(null);
   const errorAudioRef = useRef(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
-    generateNewQuestion();
-  }, []);
+    if (isActive) {
+      generateNewQuestion();
+    }
+  }, [isActive]);
 
   useEffect(() => {
     if (currentNote) {
       drawStaff();
     }
   }, [currentNote]);
+
+  useEffect(() => {
+    if (isActive && timeLeft > 0) {
+      timerRef.current = setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      endGame();
+    }
+    return () => clearTimeout(timerRef.current);
+  }, [isActive, timeLeft]);
 
   const generateNewQuestion = () => {
     let correctNote;
@@ -125,6 +141,8 @@ const GrandStaffQuiz = () => {
   };
 
   const handleGuess = (guess) => {
+    if (!isActive) return;
+
     const correctAnswer = `${currentNote.note}${currentNote.octave}`;
     setTotalGuesses(totalGuesses + 1);
     if (guess === correctAnswer) {
@@ -148,9 +166,31 @@ const GrandStaffQuiz = () => {
     return `${score}/${totalGuesses} (${(ratio * 100).toFixed(0)}%)`;
   };
 
+  const startGame = () => {
+    setIsActive(true);
+    setTimeLeft(60);
+    setScore(0);
+    setTotalGuesses(0);
+    setFeedback("");
+  };
+
+  const endGame = () => {
+    setIsActive(false);
+    setFeedback(`Time's up! Your final score is ${score}/${totalGuesses}.`);
+    clearTimeout(timerRef.current);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+
   return (
     <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
-      <h2 className="text-xl font-bold text-center">Grand Staff Note Quiz</h2>
+      <h2 className="text-xl font-bold text-center">
+        Test Your Note Reading Skills!
+      </h2>
       <p className="text-center text-sm">Range: C3 to G4</p>
       <div id="staff" className="w-full h-48 bg-gray-100"></div>
       <div className="grid grid-cols-2 gap-2">
@@ -158,7 +198,12 @@ const GrandStaffQuiz = () => {
           <button
             key={index}
             onClick={() => handleGuess(option)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            disabled={!isActive}
+            className={`px-4 py-2 ${
+              isActive
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            } rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}>
             {option}
           </button>
         ))}
@@ -167,6 +212,14 @@ const GrandStaffQuiz = () => {
       <div className="flex justify-between items-center">
         <p className="font-semibold">Score: {score}</p>
         <p className="font-semibold">Correct/Total: {getGuessRatio()}</p>
+      </div>
+      <div className="text-center">
+        <p className="font-bold text-xl">{formatTime(timeLeft)}</p>
+        <button
+          onClick={startGame}
+          className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+          {isActive ? "Reset" : "Start"}
+        </button>
       </div>
       <audio ref={successAudioRef} src="/success.mp3" />
       <audio ref={errorAudioRef} src="/error.mp3" />
