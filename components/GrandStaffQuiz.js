@@ -70,7 +70,7 @@ const GrandStaffQuiz = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
-  const [mode, setMode] = useState("practice"); // New state for mode selection
+  const [mode, setMode] = useState("practice");
 
   useEffect(() => {
     fetchStudents();
@@ -254,39 +254,55 @@ const GrandStaffQuiz = () => {
     setFeedback(`Time's up! Your final score is ${getScoreDisplay()}.`);
     clearTimeout(timerRef.current);
 
-    if (mode === "scored" && selectedStudent && score > selectedStudent.score) {
-      try {
-        const response = await fetch("/api/updateScore", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: selectedStudent.id,
-            score: score,
-          }),
-        });
+    if (mode === "scored" && selectedStudent) {
+      const accuracy = totalGuesses > 0 ? (score / totalGuesses) * 100 : 0;
 
-        if (!response.ok) {
-          throw new Error("Failed to update score");
+      if (accuracy >= 90 && score > selectedStudent.score) {
+        try {
+          const response = await fetch("/api/updateScore", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: selectedStudent.id,
+              score: score,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update score");
+          }
+
+          setFeedback(
+            `Congratulations! You beat your high score with ${accuracy.toFixed(
+              2
+            )}% accuracy. New high score: ${score}`
+          );
+          // Update the local state
+          setStudents(
+            students.map((student) =>
+              student.id === selectedStudent.id
+                ? { ...student, score: score }
+                : student
+            )
+          );
+          setSelectedStudent({ ...selectedStudent, score: score });
+        } catch (error) {
+          console.error("Error updating score:", error);
+          setFeedback(
+            `Your score: ${score} with ${accuracy.toFixed(
+              2
+            )}% accuracy. Failed to update high score. Please try again later.`
+          );
         }
-
+      } else {
         setFeedback(
-          `Congratulations! You beat your high score. New high score: ${score}`
-        );
-        // Update the local state
-        setStudents(
-          students.map((student) =>
-            student.id === selectedStudent.id
-              ? { ...student, score: score }
-              : student
-          )
-        );
-        setSelectedStudent({ ...selectedStudent, score: score });
-      } catch (error) {
-        console.error("Error updating score:", error);
-        setFeedback(
-          `Your score: ${score}. Failed to update high score. Please try again later.`
+          `Your score: ${score} with ${accuracy.toFixed(2)}% accuracy. ${
+            accuracy < 90
+              ? "You need at least 90% accuracy to update the high score."
+              : "You didn't beat your high score."
+          }`
         );
       }
     }
