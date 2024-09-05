@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PasswordPopup from "./PasswordPopup";
 
 export default function UserList({ triggerFetch, onEditUser }) {
@@ -64,6 +64,17 @@ export default function UserList({ triggerFetch, onEditUser }) {
       alert("Incorrect password. Please try again.");
     }
   };
+
+  const requestSort = useCallback(
+    (key) => {
+      let direction = "ascending";
+      if (sortConfig.key === key && sortConfig.direction === "ascending") {
+        direction = "descending";
+      }
+      setSortConfig({ key, direction });
+    },
+    [sortConfig]
+  );
 
   const sortedUsers = React.useMemo(() => {
     let sortableUsers = [...users];
