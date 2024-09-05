@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
     const db = await open({
-      filename: "./myapp.db",
+      filename: "./groove_gamer.sqlite", // Updated database name
       driver: sqlite3.Database,
     });
 
