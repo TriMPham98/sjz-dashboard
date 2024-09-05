@@ -11,6 +11,7 @@ const GrandStaffQuiz = () => {
   const [options, setOptions] = useState([]);
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
+  const [totalGuesses, setTotalGuesses] = useState(0);
   const successAudioRef = useRef(null);
   const errorAudioRef = useRef(null);
 
@@ -125,6 +126,7 @@ const GrandStaffQuiz = () => {
 
   const handleGuess = (guess) => {
     const correctAnswer = `${currentNote.note}${currentNote.octave}`;
+    setTotalGuesses(totalGuesses + 1);
     if (guess === correctAnswer) {
       setFeedback("Correct!");
       setScore(score + 1);
@@ -138,6 +140,12 @@ const GrandStaffQuiz = () => {
       }
     }
     setTimeout(generateNewQuestion, 1000);
+  };
+
+  const getGuessRatio = () => {
+    if (totalGuesses === 0) return "0/0 (0%)";
+    const ratio = (score / totalGuesses).toFixed(2);
+    return `${score}/${totalGuesses} (${(ratio * 100).toFixed(0)}%)`;
   };
 
   return (
@@ -156,7 +164,10 @@ const GrandStaffQuiz = () => {
         ))}
       </div>
       <p className="text-center font-semibold">{feedback}</p>
-      <p className="text-center font-semibold">Score: {score}</p>
+      <div className="flex justify-between items-center">
+        <p className="font-semibold">Score: {score}</p>
+        <p className="font-semibold">Correct/Total: {getGuessRatio()}</p>
+      </div>
       <audio ref={successAudioRef} src="/success.mp3" />
       <audio ref={errorAudioRef} src="/error.mp3" />
     </div>
