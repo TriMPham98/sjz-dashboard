@@ -160,7 +160,7 @@ const GrandStaffQuiz = () => {
     setTimeout(generateNewQuestion, 1000);
   };
 
-  const getGuessRatio = () => {
+  const getScoreDisplay = () => {
     if (totalGuesses === 0) return "0/0 (0%)";
     const ratio = (score / totalGuesses).toFixed(2);
     return `${score}/${totalGuesses} (${(ratio * 100).toFixed(0)}%)`;
@@ -176,7 +176,7 @@ const GrandStaffQuiz = () => {
 
   const endGame = () => {
     setIsActive(false);
-    setFeedback(`Time's up! Your final score is ${score}/${totalGuesses}.`);
+    setFeedback(`Time's up! Your final score is ${getScoreDisplay()}.`);
     clearTimeout(timerRef.current);
   };
 
@@ -209,9 +209,8 @@ const GrandStaffQuiz = () => {
         ))}
       </div>
       <p className="text-center font-semibold">{feedback}</p>
-      <div className="flex justify-between items-center">
-        <p className="font-semibold">Score: {score}</p>
-        <p className="font-semibold">Correct/Total: {getGuessRatio()}</p>
+      <div className="text-center">
+        <p className="font-semibold">Score: {getScoreDisplay()}</p>
       </div>
       <div className="text-center">
         <p className="font-bold text-xl">{formatTime(timeLeft)}</p>
