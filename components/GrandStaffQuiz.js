@@ -70,6 +70,7 @@ const GrandStaffQuiz = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
+  const [mode, setMode] = useState("practice"); // New state for mode selection
 
   useEffect(() => {
     fetchStudents();
@@ -237,7 +238,7 @@ const GrandStaffQuiz = () => {
   };
 
   const startGame = () => {
-    if (!selectedStudent) {
+    if (mode === "scored" && !selectedStudent) {
       alert("Please select a student before starting the game.");
       return;
     }
@@ -253,7 +254,7 @@ const GrandStaffQuiz = () => {
     setFeedback(`Time's up! Your final score is ${getScoreDisplay()}.`);
     clearTimeout(timerRef.current);
 
-    if (selectedStudent && score > selectedStudent.score) {
+    if (mode === "scored" && selectedStudent && score > selectedStudent.score) {
       try {
         const response = await fetch("/api/updateScore", {
           method: "POST",
@@ -306,7 +307,6 @@ const GrandStaffQuiz = () => {
   };
 
   const handlePasswordSubmit = (password) => {
-    // In a real application, you would validate the password against a secure backend
     if (password === "onDeals") {
       setSelectedStudent(tempStudentSelection);
       setShowPasswordPopup(false);
@@ -321,6 +321,13 @@ const GrandStaffQuiz = () => {
     setTempStudentSelection(null);
   };
 
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    if (newMode === "practice") {
+      setSelectedStudent(null);
+    }
+  };
+
   return (
     <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
       <h2 className="text-xl font-bold text-center">
@@ -329,23 +336,49 @@ const GrandStaffQuiz = () => {
       <p className="text-center text-sm">Range: C3 to G4</p>
 
       <div className="mb-4">
-        <label htmlFor="student-select" className="block mb-2">
-          Select Student:
-        </label>
-        <select
-          id="student-select"
-          value={selectedStudent ? selectedStudent.id : ""}
-          onChange={handleStudentChange}
-          className="w-full p-2 border rounded">
-          <option value="">Select a student</option>
-          {students.map((student) => (
-            <option key={student.id} value={student.id}>
-              {student.first_name} {student.last_name} (High Score:{" "}
-              {student.score})
-            </option>
-          ))}
-        </select>
+        <label className="block mb-2">Select Mode:</label>
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => handleModeChange("practice")}
+            className={`px-4 py-2 rounded ${
+              mode === "practice"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}>
+            Practice
+          </button>
+          <button
+            onClick={() => handleModeChange("scored")}
+            className={`px-4 py-2 rounded ${
+              mode === "scored"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}>
+            Scored
+          </button>
+        </div>
       </div>
+
+      {mode === "scored" && (
+        <div className="mb-4">
+          <label htmlFor="student-select" className="block mb-2">
+            Select Student:
+          </label>
+          <select
+            id="student-select"
+            value={selectedStudent ? selectedStudent.id : ""}
+            onChange={handleStudentChange}
+            className="w-full p-2 border rounded">
+            <option value="">Select a student</option>
+            {students.map((student) => (
+              <option key={student.id} value={student.id}>
+                {student.first_name} {student.last_name} (High Score:{" "}
+                {student.score})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div id="staff" className="w-full h-48 bg-gray-100"></div>
       <div className="grid grid-cols-2 gap-2">
