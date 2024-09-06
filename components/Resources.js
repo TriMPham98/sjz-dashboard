@@ -14,6 +14,30 @@ const Resources = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
+          <h2 className="text-2xl font-bold mb-4 text-white">
+            Grand Staff Note Quiz
+          </h2>
+          <GrandStaffQuiz />
+        </div>
+
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800 flex flex-col">
+          <h2 className="text-2xl font-bold mb-4 text-white">
+            Songs We're Learning
+          </h2>
+          <div className="flex-grow">
+            <iframe
+              style={{ borderRadius: "12px" }}
+              src="https://open.spotify.com/embed/playlist/5I4bxWhUVi9mj1Qpcb6CC5?utm_source=generator&theme=0"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              allowFullScreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">
               Bridges Rock Band Enrollment Form
@@ -38,30 +62,6 @@ const Resources = () => {
               onLoad={handleIframeLoad}
               title="Bridges Rock Band Enrollment"></iframe>
           </div>
-        </div>
-
-        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800 flex flex-col">
-          <h2 className="text-2xl font-bold mb-4 text-white">
-            Songs We're Learning
-          </h2>
-          <div className="flex-grow">
-            <iframe
-              style={{ borderRadius: "12px" }}
-              src="https://open.spotify.com/embed/playlist/5I4bxWhUVi9mj1Qpcb6CC5?utm_source=generator&theme=0"
-              width="100%"
-              height="100%"
-              frameBorder="0"
-              allowFullScreen=""
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"></iframe>
-          </div>
-        </div>
-
-        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
-          <h2 className="text-2xl font-bold mb-4 text-white">
-            Grand Staff Note Quiz
-          </h2>
-          <GrandStaffQuiz />
         </div>
       </div>
     </div>
