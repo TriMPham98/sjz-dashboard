@@ -303,7 +303,7 @@ const GrandStaffQuiz = () => {
           `Your score: ${score} with ${accuracy.toFixed(2)}% accuracy. ${
             accuracy < 90
               ? "You need at least 90% accuracy to update the high score."
-              : "You didn't beat your high score."
+              : "Try again!"
           }`
         );
       }
@@ -349,7 +349,7 @@ const GrandStaffQuiz = () => {
   return (
     <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
       <h2 className="text-xl font-bold text-center">
-        Test Your Note Reading Skills!
+        Test Your Note Reading Skills 🎹 🎵
       </h2>
       <p className="text-center text-sm">Range: C3 to G4</p>
 
