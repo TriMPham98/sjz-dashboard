@@ -13,7 +13,7 @@ const GrandStaffQuiz = () => {
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
   const [totalGuesses, setTotalGuesses] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [isActive, setIsActive] = useState(false);
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -277,6 +277,7 @@ const GrandStaffQuiz = () => {
   const handleModeChange = useCallback((newMode) => {
     setMode(newMode);
     setSelectedStudent(null);
+    setTimeLeft(newMode === "practice" ? 30 : 60);
   }, []);
 
   return (
