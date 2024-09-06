@@ -296,6 +296,9 @@ const GrandStaffQuiz = () => {
 
     if (mode === "practice") {
       setFeedback(`Great job! Your final score is ${getScoreDisplay()}.`);
+      if (practiceSuccessAudioRef.current) {
+        practiceSuccessAudioRef.current.play();
+      }
     } else if (mode === "scored" && selectedStudent) {
       if (accuracy >= 90 && score > selectedStudent.score) {
         try {
