@@ -298,7 +298,7 @@ const GrandStaffQuiz = () => {
           if (!response.ok) throw new Error("Failed to update score");
 
           setFeedback(
-            `Congratulations! You beat your high score with ${accuracy.toFixed(
+            `Congratulations, ${selectedStudent.first_name}! You beat your high score with ${accuracy.toFixed(
               2
             )}% accuracy. New high score: ${score}`
           );
