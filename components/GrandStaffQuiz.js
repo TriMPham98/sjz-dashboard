@@ -443,7 +443,9 @@ const GrandStaffQuiz = () => {
             disabled={!isActive}
             className={`px-4 py-2 ${
               isActive
-                ? "bg-blue-500 text-white hover:bg-blue-600"
+                ? mode === "practice"
+                  ? "bg-blue-500 text-white hover:bg-blue-600"
+                  : "bg-red-600 text-white hover:bg-red-700"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             } rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}>
             {option}
