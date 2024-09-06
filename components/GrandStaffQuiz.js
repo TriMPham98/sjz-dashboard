@@ -72,6 +72,7 @@ const GrandStaffQuiz = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
   const [mode, setMode] = useState("practice");
+  const quizContainerRef = useRef(null);
 
   useEffect(() => {
     fetchStudents();
@@ -271,11 +272,17 @@ const GrandStaffQuiz = () => {
   };
 
   const triggerConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
+    if (quizContainerRef.current) {
+      const rect = quizContainerRef.current.getBoundingClientRect();
+      const centerX = (rect.left + rect.right) / 2 / window.innerWidth;
+      const centerY = (rect.top + rect.bottom) / 2 / window.innerHeight;
+
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { x: centerX, y: centerY },
+      });
+    }
   };
 
   const endGame = async () => {
@@ -316,6 +323,8 @@ const GrandStaffQuiz = () => {
             )
           );
           setSelectedStudent({ ...selectedStudent, score: score });
+
+          // Trigger confetti animation for new high score
           triggerConfetti();
         } catch (error) {
           console.error("Error updating score:", error);
@@ -374,7 +383,9 @@ const GrandStaffQuiz = () => {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
+    <div
+      ref={quizContainerRef}
+      className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
       <h2 className="text-xl font-bold text-center">
         Test Your Note Reading Skills 🎹 🎵
       </h2>
