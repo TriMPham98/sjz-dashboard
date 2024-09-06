@@ -19,15 +19,20 @@ const StaffRenderer = ({ currentNote }) => {
       staffRef.current,
       VF.Renderer.Backends.SVG
     );
-    renderer.resize(400, 200);
+
+    const width = 475;
+    const height = 200;
+    renderer.resize(width, height);
+
     const context = renderer.getContext();
     context.setFillStyle("#000000");
     context.setStrokeStyle("#000000");
 
-    const trebleStaff = new VF.Stave(10, 0, 380);
+    const staveWidth = width - 20;
+    const trebleStaff = new VF.Stave(10, 30, staveWidth);
     trebleStaff.addClef("treble").setContext(context).draw();
 
-    const bassStaff = new VF.Stave(10, 80, 380);
+    const bassStaff = new VF.Stave(10, 110, staveWidth);
     bassStaff.addClef("bass").setContext(context).draw();
 
     if (currentNote) {
@@ -55,7 +60,7 @@ const StaffRenderer = ({ currentNote }) => {
       const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
       voice.addTickables([note]);
 
-      new VF.Formatter().joinVoices([voice]).format([voice], 380);
+      new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 50);
       voice.draw(context, staveToUse);
     }
   };
