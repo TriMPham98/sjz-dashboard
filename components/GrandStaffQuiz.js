@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Vex from "vexflow";
+import confetti from "canvas-confetti";
 
 const VF = Vex.Flow;
 
@@ -213,13 +214,11 @@ const GrandStaffQuiz = () => {
   };
 
   const playSound = (isCorrect) => {
-    // Stop both sounds if they're playing
     successAudioRef.current.pause();
     successAudioRef.current.currentTime = 0;
     errorAudioRef.current.pause();
     errorAudioRef.current.currentTime = 0;
 
-    // Play the appropriate sound
     if (isCorrect) {
       successAudioRef.current.play();
     } else {
@@ -233,10 +232,8 @@ const GrandStaffQuiz = () => {
     const correctAnswer = `${currentNote.note}${currentNote.octave}`;
     const isCorrect = guess === correctAnswer;
 
-    // Play the sound immediately
     playSound(isCorrect);
 
-    // Update state after playing the sound
     setTotalGuesses((prev) => prev + 1);
     if (isCorrect) {
       setScore((prev) => prev + 1);
@@ -245,7 +242,6 @@ const GrandStaffQuiz = () => {
       setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
     }
 
-    // Generate new question after a short delay
     setTimeout(generateNewQuestion, 500);
   };
 
@@ -261,7 +257,6 @@ const GrandStaffQuiz = () => {
       clearTimeout(timerRef.current);
       setFeedback("Game reset. Press Start to begin a new game.");
     } else {
-      // If the game is not active, start it
       if (mode === "scored" && !selectedStudent) {
         alert("Please select a student before starting the game.");
         return;
@@ -273,6 +268,14 @@ const GrandStaffQuiz = () => {
       setFeedback("");
       generateNewQuestion();
     }
+  };
+
+  const triggerConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
   };
 
   const endGame = async () => {
@@ -313,6 +316,7 @@ const GrandStaffQuiz = () => {
             )
           );
           setSelectedStudent({ ...selectedStudent, score: score });
+          triggerConfetti();
         } catch (error) {
           console.error("Error updating score:", error);
           setFeedback(
