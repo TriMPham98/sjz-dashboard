@@ -43,6 +43,8 @@ const GrandStaffQuiz = () => {
   useEffect(() => {
     if (isActive) {
       generateNewQuestion();
+    } else {
+      setCurrentNote(null);
     }
   }, [isActive]);
 
@@ -142,6 +144,7 @@ const GrandStaffQuiz = () => {
       clearTimeout(timerRef.current);
       setFeedback("Game reset. Press Start to begin a new game.");
       setMode("practice");
+      setCurrentNote(null);
     } else {
       if (mode === "scored" && !selectedStudent) {
         alert("Please select a student before starting the game.");
@@ -228,6 +231,7 @@ const GrandStaffQuiz = () => {
     }
     setMode("practice");
     setSelectedStudent(null);
+    setCurrentNote(null);
   }, [
     mode,
     score,
@@ -286,6 +290,7 @@ const GrandStaffQuiz = () => {
       setTimeLeft(newMode === "practice" ? 30 : 60);
       setScore(0);
       setTotalGuesses(0);
+      setCurrentNote(null);
     },
     [isActive]
   );
