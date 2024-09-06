@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import confetti from "canvas-confetti";
 import PasswordPopup from "./PasswordPopup";
 import StaffRenderer from "./StaffRenderer";
+import { useSound } from "./SoundManager";
 
 const notes = ["C", "D", "E", "F", "G", "A", "B"];
 const octaves = [3, 4];
@@ -20,10 +21,7 @@ const GrandStaffQuiz = () => {
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
   const [mode, setMode] = useState("practice");
 
-  const successAudioRef = useRef(null);
-  const errorAudioRef = useRef(null);
-  const practiceSuccessAudioRef = useRef(null);
-  const highScoreSuccessAudioRef = useRef(null);
+  const { playSound } = useSound();
   const timerRef = useRef(null);
   const quizContainerRef = useRef(null);
 
@@ -110,13 +108,6 @@ const GrandStaffQuiz = () => {
     }
   };
 
-  const playSound = useCallback((isCorrect) => {
-    const audioRef = isCorrect ? successAudioRef : errorAudioRef;
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
-    audioRef.current.play();
-  }, []);
-
   const handleGuess = useCallback(
     (guess) => {
       if (!isActive) return;
@@ -124,7 +115,7 @@ const GrandStaffQuiz = () => {
       const correctAnswer = `${currentNote.note}${currentNote.octave}`;
       const isCorrect = guess === correctAnswer;
 
-      playSound(isCorrect);
+      playSound(isCorrect ? "success" : "error");
 
       setTotalGuesses((prev) => prev + 1);
       if (isCorrect) {
@@ -187,7 +178,7 @@ const GrandStaffQuiz = () => {
 
     if (mode === "practice") {
       setFeedback(`Great job! Your final score is ${getScoreDisplay()}.`);
-      practiceSuccessAudioRef.current?.play();
+      playSound("practiceSuccess");
     } else if (mode === "scored" && selectedStudent) {
       if (accuracy >= 90 && score > selectedStudent.score) {
         try {
@@ -215,7 +206,7 @@ const GrandStaffQuiz = () => {
           );
           setSelectedStudent((prev) => ({ ...prev, score }));
 
-          highScoreSuccessAudioRef.current?.play();
+          playSound("highScoreSuccess");
           triggerConfetti();
         } catch (error) {
           console.error("Error updating score:", error);
@@ -244,6 +235,7 @@ const GrandStaffQuiz = () => {
     selectedStudent,
     getScoreDisplay,
     triggerConfetti,
+    playSound,
   ]);
 
   const formatTime = (seconds) => {
@@ -368,10 +360,6 @@ const GrandStaffQuiz = () => {
           {isActive ? "Reset" : "Start"}
         </button>
       </div>
-      <audio ref={successAudioRef} src="/success.mp3" />
-      <audio ref={errorAudioRef} src="/error.mp3" />
-      <audio ref={practiceSuccessAudioRef} src="/practiceSuccess.mp3" />
-      <audio ref={highScoreSuccessAudioRef} src="/highScoreSuccess.mp3" />
 
       {showPasswordPopup && (
         <PasswordPopup
