@@ -5,6 +5,7 @@ import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
 import Resources from "../components/Resources";
+import Quizzes from "../components/Quizzes"; // New import
 import Footer from "../components/Footer";
 import PasswordPopup from "../components/PasswordPopup";
 
@@ -70,7 +71,7 @@ export default function Home() {
     }
   }, [activeTab]);
 
-  const tabs = ["dashboard", "resources", "students"];
+  const tabs = ["dashboard", "quizzes", "resources", "students"];
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -112,6 +113,21 @@ export default function Home() {
 
         {/* Main content */}
         <main className="flex-1 p-8 bg-black">
+          {activeTab === "dashboard" && (
+            <>
+              <h1 className="text-4xl font-bold mb-8 text-gray-100">
+                Dashboard
+              </h1>
+              <Dashboard />
+            </>
+          )}
+          {activeTab === "quizzes" && (
+            <>
+              <h1 className="text-4xl font-bold mb-8 text-gray-100">Quizzes</h1>
+              <Quizzes />
+            </>
+          )}
+          {activeTab === "resources" && <Resources />}
           {activeTab === "students" && (
             <>
               <div className="flex justify-between items-center mb-8">
@@ -150,15 +166,6 @@ export default function Home() {
               )}
             </>
           )}
-          {activeTab === "dashboard" && (
-            <>
-              <h1 className="text-4xl font-bold mb-8 text-gray-100">
-                Dashboard
-              </h1>
-              <Dashboard />
-            </>
-          )}
-          {activeTab === "resources" && <Resources />}
         </main>
       </div>
 
