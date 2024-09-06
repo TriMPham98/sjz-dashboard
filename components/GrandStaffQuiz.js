@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Vex from "vexflow";
 import confetti from "canvas-confetti";
 
@@ -12,9 +12,7 @@ const PasswordPopup = ({ onSubmit, onCancel }) => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
   }, []);
 
   const handleSubmit = (e) => {
@@ -64,21 +62,33 @@ const GrandStaffQuiz = () => {
   const [totalGuesses, setTotalGuesses] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [isActive, setIsActive] = useState(false);
-  const successAudioRef = useRef(null);
-  const errorAudioRef = useRef(null);
-  const practiceSuccessAudioRef = useRef(null);
-  const highScoreSuccessAudioRef = useRef(null);
-  const timerRef = useRef(null);
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
   const [mode, setMode] = useState("practice");
+
+  const successAudioRef = useRef(null);
+  const errorAudioRef = useRef(null);
+  const practiceSuccessAudioRef = useRef(null);
+  const highScoreSuccessAudioRef = useRef(null);
+  const timerRef = useRef(null);
   const quizContainerRef = useRef(null);
+
+  const fetchStudents = useCallback(async () => {
+    try {
+      const response = await fetch("/api/checkUsers");
+      if (!response.ok) throw new Error("Failed to fetch students");
+      const data = await response.json();
+      setStudents(data.sort((a, b) => b.score - a.score));
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchStudents();
-  }, []);
+  }, [fetchStudents]);
 
   useEffect(() => {
     if (isActive) {
@@ -94,30 +104,14 @@ const GrandStaffQuiz = () => {
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
-      timerRef.current = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
+      timerRef.current = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
     } else if (timeLeft === 0) {
       endGame();
     }
     return () => clearTimeout(timerRef.current);
   }, [isActive, timeLeft]);
 
-  const fetchStudents = async () => {
-    try {
-      const response = await fetch("/api/checkUsers");
-      if (!response.ok) {
-        throw new Error("Failed to fetch students");
-      }
-      const data = await response.json();
-      const sortedStudents = data.sort((a, b) => b.score - a.score);
-      setStudents(sortedStudents);
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    }
-  };
-
-  const generateNewQuestion = () => {
+  const generateNewQuestion = useCallback(() => {
     let correctNote;
     do {
       correctNote = {
@@ -138,7 +132,7 @@ const GrandStaffQuiz = () => {
     shuffleArray(newOptions);
     setOptions(newOptions);
     setFeedback("");
-  };
+  }, []);
 
   const generateWrongOptions = (correctNote) => {
     const wrongOptions = [];
@@ -170,7 +164,7 @@ const GrandStaffQuiz = () => {
     }
   };
 
-  const drawStaff = () => {
+  const drawStaff = useCallback(() => {
     const div = document.getElementById("staff");
     div.innerHTML = "";
 
@@ -210,51 +204,46 @@ const GrandStaffQuiz = () => {
     const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
     voice.addTickables([note]);
 
-    const formatter = new VF.Formatter()
-      .joinVoices([voice])
-      .format([voice], 380);
+    new VF.Formatter().joinVoices([voice]).format([voice], 380);
     voice.draw(context, staveToUse);
-  };
+  }, [currentNote]);
 
-  const playSound = (isCorrect) => {
-    successAudioRef.current.pause();
-    successAudioRef.current.currentTime = 0;
-    errorAudioRef.current.pause();
-    errorAudioRef.current.currentTime = 0;
+  const playSound = useCallback((isCorrect) => {
+    const audioRef = isCorrect ? successAudioRef : errorAudioRef;
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+    audioRef.current.play();
+  }, []);
 
-    if (isCorrect) {
-      successAudioRef.current.play();
-    } else {
-      errorAudioRef.current.play();
-    }
-  };
+  const handleGuess = useCallback(
+    (guess) => {
+      if (!isActive) return;
 
-  const handleGuess = (guess) => {
-    if (!isActive) return;
+      const correctAnswer = `${currentNote.note}${currentNote.octave}`;
+      const isCorrect = guess === correctAnswer;
 
-    const correctAnswer = `${currentNote.note}${currentNote.octave}`;
-    const isCorrect = guess === correctAnswer;
+      playSound(isCorrect);
 
-    playSound(isCorrect);
+      setTotalGuesses((prev) => prev + 1);
+      if (isCorrect) {
+        setScore((prev) => prev + 1);
+        setFeedback("Correct!");
+      } else {
+        setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
+      }
 
-    setTotalGuesses((prev) => prev + 1);
-    if (isCorrect) {
-      setScore((prev) => prev + 1);
-      setFeedback("Correct!");
-    } else {
-      setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
-    }
+      setTimeout(generateNewQuestion, 500);
+    },
+    [isActive, currentNote, playSound, generateNewQuestion]
+  );
 
-    setTimeout(generateNewQuestion, 500);
-  };
-
-  const getScoreDisplay = () => {
+  const getScoreDisplay = useCallback(() => {
     if (totalGuesses === 0) return "0/0 (0%)";
     const ratio = (score / totalGuesses).toFixed(2);
     return `${score}/${totalGuesses} (${(ratio * 100).toFixed(0)}%)`;
-  };
+  }, [score, totalGuesses]);
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
     if (isActive) {
       setIsActive(false);
       clearTimeout(timerRef.current);
@@ -266,15 +255,15 @@ const GrandStaffQuiz = () => {
         return;
       }
       setIsActive(true);
-      setTimeLeft(60);
+      setTimeLeft(15);
       setScore(0);
       setTotalGuesses(0);
       setFeedback("");
       generateNewQuestion();
     }
-  };
+  }, [isActive, mode, selectedStudent, generateNewQuestion]);
 
-  const triggerConfetti = () => {
+  const triggerConfetti = useCallback(() => {
     if (quizContainerRef.current) {
       const rect = quizContainerRef.current.getBoundingClientRect();
       const centerX = (rect.left + rect.right) / 2 / window.innerWidth;
@@ -286,9 +275,9 @@ const GrandStaffQuiz = () => {
         origin: { x: centerX, y: centerY },
       });
     }
-  };
+  }, []);
 
-  const endGame = async () => {
+  const endGame = useCallback(async () => {
     setIsActive(false);
     clearTimeout(timerRef.current);
 
@@ -296,45 +285,33 @@ const GrandStaffQuiz = () => {
 
     if (mode === "practice") {
       setFeedback(`Great job! Your final score is ${getScoreDisplay()}.`);
-      if (practiceSuccessAudioRef.current) {
-        practiceSuccessAudioRef.current.play();
-      }
+      practiceSuccessAudioRef.current?.play();
     } else if (mode === "scored" && selectedStudent) {
       if (accuracy >= 90 && score > selectedStudent.score) {
         try {
           const response = await fetch("/api/updateScore", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id: selectedStudent.id,
-              score: score,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: selectedStudent.id, score }),
           });
 
-          if (!response.ok) {
-            throw new Error("Failed to update score");
-          }
+          if (!response.ok) throw new Error("Failed to update score");
 
           setFeedback(
             `Congratulations! You beat your high score with ${accuracy.toFixed(
               2
             )}% accuracy. New high score: ${score}`
           );
-          setStudents(
-            students.map((student) =>
+          setStudents((prevStudents) =>
+            prevStudents.map((student) =>
               student.id === selectedStudent.id
-                ? { ...student, score: score }
+                ? { ...student, score }
                 : student
             )
           );
-          setSelectedStudent({ ...selectedStudent, score: score });
+          setSelectedStudent((prev) => ({ ...prev, score }));
 
-          if (highScoreSuccessAudioRef.current) {
-            highScoreSuccessAudioRef.current.play();
-          }
-
+          highScoreSuccessAudioRef.current?.play();
           triggerConfetti();
         } catch (error) {
           console.error("Error updating score:", error);
@@ -356,7 +333,14 @@ const GrandStaffQuiz = () => {
     }
     setMode("practice");
     setSelectedStudent(null);
-  };
+  }, [
+    mode,
+    score,
+    totalGuesses,
+    selectedStudent,
+    getScoreDisplay,
+    triggerConfetti,
+  ]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -364,39 +348,40 @@ const GrandStaffQuiz = () => {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  const handleStudentChange = (e) => {
-    const newStudentId = parseInt(e.target.value);
-    if (newStudentId !== selectedStudent?.id) {
-      setTempStudentSelection(students.find((s) => s.id === newStudentId));
-      setShowPasswordPopup(true);
-    }
-  };
+  const handleStudentChange = useCallback(
+    (e) => {
+      const newStudentId = parseInt(e.target.value);
+      if (newStudentId !== selectedStudent?.id) {
+        setTempStudentSelection(students.find((s) => s.id === newStudentId));
+        setShowPasswordPopup(true);
+      }
+    },
+    [selectedStudent, students]
+  );
 
-  const handlePasswordSubmit = (password) => {
-    if (password === "onDeals") {
-      setSelectedStudent(tempStudentSelection);
-      setShowPasswordPopup(false);
-      setMode("scored");
-    } else {
-      alert("Incorrect password");
-    }
-    setTempStudentSelection(null);
-  };
+  const handlePasswordSubmit = useCallback(
+    (password) => {
+      if (password === "onDeals") {
+        setSelectedStudent(tempStudentSelection);
+        setShowPasswordPopup(false);
+        setMode("scored");
+      } else {
+        alert("Incorrect password");
+      }
+      setTempStudentSelection(null);
+    },
+    [tempStudentSelection]
+  );
 
-  const handlePasswordCancel = () => {
+  const handlePasswordCancel = useCallback(() => {
     setShowPasswordPopup(false);
     setTempStudentSelection(null);
-  };
+  }, []);
 
-  const handleModeChange = (newMode) => {
-    if (newMode === "scored") {
-      setMode("scored");
-      setSelectedStudent(null);
-    } else {
-      setMode("practice");
-      setSelectedStudent(null);
-    }
-  };
+  const handleModeChange = useCallback((newMode) => {
+    setMode(newMode);
+    setSelectedStudent(null);
+  }, []);
 
   return (
     <div
