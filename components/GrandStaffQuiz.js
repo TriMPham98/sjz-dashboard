@@ -256,15 +256,23 @@ const GrandStaffQuiz = () => {
   };
 
   const startGame = () => {
-    if (mode === "scored" && !selectedStudent) {
-      alert("Please select a student before starting the game.");
-      return;
+    if (isActive) {
+      setIsActive(false);
+      clearTimeout(timerRef.current);
+      setFeedback("Game reset. Press Start to begin a new game.");
+    } else {
+      // If the game is not active, start it
+      if (mode === "scored" && !selectedStudent) {
+        alert("Please select a student before starting the game.");
+        return;
+      }
+      setIsActive(true);
+      setTimeLeft(60);
+      setScore(0);
+      setTotalGuesses(0);
+      setFeedback("");
+      generateNewQuestion();
     }
-    setIsActive(true);
-    setTimeLeft(60);
-    setScore(0);
-    setTotalGuesses(0);
-    setFeedback("");
   };
 
   const endGame = async () => {
