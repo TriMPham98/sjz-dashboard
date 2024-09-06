@@ -106,7 +106,6 @@ const GrandStaffQuiz = () => {
         throw new Error("Failed to fetch students");
       }
       const data = await response.json();
-      // Sort students by score in descending order
       const sortedStudents = data.sort((a, b) => b.score - a.score);
       setStudents(sortedStudents);
     } catch (error) {
@@ -213,23 +212,40 @@ const GrandStaffQuiz = () => {
     voice.draw(context, staveToUse);
   };
 
+  const playSound = (isCorrect) => {
+    // Stop both sounds if they're playing
+    successAudioRef.current.pause();
+    successAudioRef.current.currentTime = 0;
+    errorAudioRef.current.pause();
+    errorAudioRef.current.currentTime = 0;
+
+    // Play the appropriate sound
+    if (isCorrect) {
+      successAudioRef.current.play();
+    } else {
+      errorAudioRef.current.play();
+    }
+  };
+
   const handleGuess = (guess) => {
     if (!isActive) return;
 
     const correctAnswer = `${currentNote.note}${currentNote.octave}`;
-    setTotalGuesses(totalGuesses + 1);
-    if (guess === correctAnswer) {
+    const isCorrect = guess === correctAnswer;
+
+    // Play the sound immediately
+    playSound(isCorrect);
+
+    // Update state after playing the sound
+    setTotalGuesses((prev) => prev + 1);
+    if (isCorrect) {
+      setScore((prev) => prev + 1);
       setFeedback("Correct!");
-      setScore(score + 1);
-      if (successAudioRef.current) {
-        successAudioRef.current.play();
-      }
     } else {
       setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
-      if (errorAudioRef.current) {
-        errorAudioRef.current.play();
-      }
     }
+
+    // Generate new question after a short delay
     setTimeout(generateNewQuestion, 500);
   };
 
@@ -281,7 +297,6 @@ const GrandStaffQuiz = () => {
               2
             )}% accuracy. New high score: ${score}`
           );
-          // Update the local state
           setStudents(
             students.map((student) =>
               student.id === selectedStudent.id
