@@ -75,6 +75,7 @@ const GrandStaffQuiz = () => {
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
   const [mode, setMode] = useState("practice");
   const quizContainerRef = useRef(null);
+  const [competitiveAttemptUsed, setCompetitiveAttemptUsed] = useState(false);
 
   useEffect(() => {
     fetchStudents();
@@ -259,10 +260,14 @@ const GrandStaffQuiz = () => {
       setIsActive(false);
       clearTimeout(timerRef.current);
       setFeedback("Game reset. Press Start to begin a new game.");
+      setMode("practice");
     } else {
-      if (mode === "scored" && !selectedStudent) {
-        alert("Please select a student before starting the game.");
-        return;
+      if (mode === "scored") {
+        if (!selectedStudent) {
+          alert("Please select a student before starting the game.");
+          return;
+        }
+        setCompetitiveAttemptUsed(true);
       }
       setIsActive(true);
       setTimeLeft(60);
@@ -289,15 +294,11 @@ const GrandStaffQuiz = () => {
 
   const endGame = async () => {
     setIsActive(false);
-    setFeedback(`Time's up! Your final score is ${getScoreDisplay()}.`);
     clearTimeout(timerRef.current);
 
     const accuracy = totalGuesses > 0 ? (score / totalGuesses) * 100 : 0;
 
     if (mode === "practice") {
-      if (practiceSuccessAudioRef.current) {
-        practiceSuccessAudioRef.current.play();
-      }
       setFeedback(`Great job! Your final score is ${getScoreDisplay()}.`);
     } else if (mode === "scored" && selectedStudent) {
       if (accuracy >= 90 && score > selectedStudent.score) {
@@ -331,12 +332,10 @@ const GrandStaffQuiz = () => {
           );
           setSelectedStudent({ ...selectedStudent, score: score });
 
-          // Play high score success sound
           if (highScoreSuccessAudioRef.current) {
             highScoreSuccessAudioRef.current.play();
           }
 
-          // Trigger confetti animation for new high score
           triggerConfetti();
         } catch (error) {
           console.error("Error updating score:", error);
@@ -356,6 +355,7 @@ const GrandStaffQuiz = () => {
         );
       }
     }
+    setMode("practice");
   };
 
   const formatTime = (seconds) => {
@@ -376,6 +376,8 @@ const GrandStaffQuiz = () => {
     if (password === "onDeals") {
       setSelectedStudent(tempStudentSelection);
       setShowPasswordPopup(false);
+      setCompetitiveAttemptUsed(false);
+      setMode("scored");
     } else {
       alert("Incorrect password");
     }
@@ -388,9 +390,13 @@ const GrandStaffQuiz = () => {
   };
 
   const handleModeChange = (newMode) => {
-    setMode(newMode);
-    if (newMode === "practice") {
-      setSelectedStudent(null);
+    if (newMode === "scored" && competitiveAttemptUsed) {
+      setShowPasswordPopup(true);
+    } else {
+      setMode(newMode);
+      if (newMode === "practice") {
+        setSelectedStudent(null);
+      }
     }
   };
 
