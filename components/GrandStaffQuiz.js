@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Vex from "vexflow";
 import confetti from "canvas-confetti";
-import PasswordPopup from "./PasswordPopup"; // Import the existing PasswordPopup component
-
-const VF = Vex.Flow;
+import PasswordPopup from "./PasswordPopup";
+import StaffRenderer from "./StaffRenderer";
 
 const notes = ["C", "D", "E", "F", "G", "A", "B"];
 const octaves = [3, 4];
@@ -49,12 +47,6 @@ const GrandStaffQuiz = () => {
       generateNewQuestion();
     }
   }, [isActive]);
-
-  useEffect(() => {
-    if (currentNote) {
-      drawStaff();
-    }
-  }, [currentNote]);
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
@@ -117,50 +109,6 @@ const GrandStaffQuiz = () => {
       [array[i], array[j]] = [array[j], array[i]];
     }
   };
-
-  const drawStaff = useCallback(() => {
-    const div = document.getElementById("staff");
-    div.innerHTML = "";
-
-    const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
-    renderer.resize(400, 200);
-    const context = renderer.getContext();
-    context.setFillStyle("#000000");
-    context.setStrokeStyle("#000000");
-
-    const trebleStaff = new VF.Stave(10, 0, 380);
-    trebleStaff.addClef("treble").setContext(context).draw();
-
-    const bassStaff = new VF.Stave(10, 80, 380);
-    bassStaff.addClef("bass").setContext(context).draw();
-
-    const isOnTrebleStaff = currentNote.octave === 4;
-    const staveToUse = isOnTrebleStaff ? trebleStaff : bassStaff;
-
-    const note = new VF.StaveNote({
-      clef: isOnTrebleStaff ? "treble" : "bass",
-      keys: [`${currentNote.note.toLowerCase()}/${currentNote.octave}`],
-      duration: "w",
-    });
-
-    if (isOnTrebleStaff) {
-      if (["C", "D", "E"].includes(currentNote.note)) {
-        note.addModifier(new VF.Annotation("").setPosition(1));
-      }
-    } else {
-      if (["A", "B"].includes(currentNote.note)) {
-        note.addModifier(new VF.Annotation("").setPosition(3));
-      } else if (currentNote.note === "C") {
-        note.addModifier(new VF.Annotation("").setPosition(1));
-      }
-    }
-
-    const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
-    voice.addTickables([note]);
-
-    new VF.Formatter().joinVoices([voice]).format([voice], 380);
-    voice.draw(context, staveToUse);
-  }, [currentNote]);
 
   const playSound = useCallback((isCorrect) => {
     const audioRef = isCorrect ? successAudioRef : errorAudioRef;
@@ -390,7 +338,7 @@ const GrandStaffQuiz = () => {
         </div>
       )}
 
-      <div id="staff" className="w-full h-48 bg-gray-100"></div>
+      <StaffRenderer currentNote={currentNote} />
       <div className="grid grid-cols-2 gap-2">
         {options.map((option, index) => (
           <button
