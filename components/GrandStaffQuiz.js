@@ -274,11 +274,21 @@ const GrandStaffQuiz = () => {
     setTempStudentSelection(null);
   }, []);
 
-  const handleModeChange = useCallback((newMode) => {
-    setMode(newMode);
-    setSelectedStudent(null);
-    setTimeLeft(newMode === "practice" ? 30 : 60);
-  }, []);
+  const handleModeChange = useCallback(
+    (newMode) => {
+      if (isActive) {
+        setIsActive(false);
+        clearTimeout(timerRef.current);
+        setFeedback("Game reset. Press Start to begin a new game.");
+      }
+      setMode(newMode);
+      setSelectedStudent(null);
+      setTimeLeft(newMode === "practice" ? 30 : 60);
+      setScore(0);
+      setTotalGuesses(0);
+    },
+    [isActive]
+  );
 
   return (
     <div
