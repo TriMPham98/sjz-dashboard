@@ -369,7 +369,7 @@ const GrandStaffQuiz = () => {
       <p className="text-center text-sm">Range: C3 to G4</p>
 
       <div className="mb-4">
-        <label className="block mb-2">Select Mode:</label>
+        <label className="block mb-2 text-center">Select Mode:</label>
         <div className="flex justify-center space-x-4">
           <button
             onClick={() => handleModeChange("practice")}
@@ -394,9 +394,6 @@ const GrandStaffQuiz = () => {
 
       {mode === "scored" && (
         <div className="mb-4">
-          <label htmlFor="student-select" className="block mb-2">
-            Select Student:
-          </label>
           <select
             id="student-select"
             value={selectedStudent ? selectedStudent.id : ""}
