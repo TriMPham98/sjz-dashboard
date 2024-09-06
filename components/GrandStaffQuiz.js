@@ -378,16 +378,16 @@ const GrandStaffQuiz = () => {
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-gray-700"
             }`}>
-            Practice
+            Practice 🤓
           </button>
           <button
             onClick={() => handleModeChange("scored")}
             className={`px-4 py-2 rounded ${
               mode === "scored"
-                ? "bg-blue-500 text-white"
+                ? "bg-red-600 text-white"
                 : "bg-gray-200 text-gray-700"
             }`}>
-            Competitive
+            Competitive 😤
           </button>
         </div>
       </div>
