@@ -66,6 +66,8 @@ const GrandStaffQuiz = () => {
   const [isActive, setIsActive] = useState(false);
   const successAudioRef = useRef(null);
   const errorAudioRef = useRef(null);
+  const practiceSuccessAudioRef = useRef(null);
+  const highScoreSuccessAudioRef = useRef(null);
   const timerRef = useRef(null);
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -290,9 +292,14 @@ const GrandStaffQuiz = () => {
     setFeedback(`Time's up! Your final score is ${getScoreDisplay()}.`);
     clearTimeout(timerRef.current);
 
-    if (mode === "scored" && selectedStudent) {
-      const accuracy = totalGuesses > 0 ? (score / totalGuesses) * 100 : 0;
+    const accuracy = totalGuesses > 0 ? (score / totalGuesses) * 100 : 0;
 
+    if (mode === "practice") {
+      if (practiceSuccessAudioRef.current) {
+        practiceSuccessAudioRef.current.play();
+      }
+      setFeedback(`Great job! Your final score is ${getScoreDisplay()}.`);
+    } else if (mode === "scored" && selectedStudent) {
       if (accuracy >= 90 && score > selectedStudent.score) {
         try {
           const response = await fetch("/api/updateScore", {
@@ -323,6 +330,11 @@ const GrandStaffQuiz = () => {
             )
           );
           setSelectedStudent({ ...selectedStudent, score: score });
+
+          // Play high score success sound
+          if (highScoreSuccessAudioRef.current) {
+            highScoreSuccessAudioRef.current.play();
+          }
 
           // Trigger confetti animation for new high score
           triggerConfetti();
@@ -463,6 +475,8 @@ const GrandStaffQuiz = () => {
       </div>
       <audio ref={successAudioRef} src="/success.mp3" />
       <audio ref={errorAudioRef} src="/error.mp3" />
+      <audio ref={practiceSuccessAudioRef} src="/practiceSuccess.mp3" />
+      <audio ref={highScoreSuccessAudioRef} src="/highScoreSuccess.mp3" />
 
       {showPasswordPopup && (
         <PasswordPopup
