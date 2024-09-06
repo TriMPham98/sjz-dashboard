@@ -75,7 +75,6 @@ const GrandStaffQuiz = () => {
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
   const [mode, setMode] = useState("practice");
   const quizContainerRef = useRef(null);
-  const [competitiveAttemptUsed, setCompetitiveAttemptUsed] = useState(false);
 
   useEffect(() => {
     fetchStudents();
@@ -262,12 +261,9 @@ const GrandStaffQuiz = () => {
       setFeedback("Game reset. Press Start to begin a new game.");
       setMode("practice");
     } else {
-      if (mode === "scored") {
-        if (!selectedStudent) {
-          alert("Please select a student before starting the game.");
-          return;
-        }
-        setCompetitiveAttemptUsed(true);
+      if (mode === "scored" && !selectedStudent) {
+        alert("Please select a student before starting the game.");
+        return;
       }
       setIsActive(true);
       setTimeLeft(60);
@@ -356,6 +352,7 @@ const GrandStaffQuiz = () => {
       }
     }
     setMode("practice");
+    setSelectedStudent(null);
   };
 
   const formatTime = (seconds) => {
@@ -376,7 +373,6 @@ const GrandStaffQuiz = () => {
     if (password === "onDeals") {
       setSelectedStudent(tempStudentSelection);
       setShowPasswordPopup(false);
-      setCompetitiveAttemptUsed(false);
       setMode("scored");
     } else {
       alert("Incorrect password");
@@ -390,13 +386,12 @@ const GrandStaffQuiz = () => {
   };
 
   const handleModeChange = (newMode) => {
-    if (newMode === "scored" && competitiveAttemptUsed) {
-      setShowPasswordPopup(true);
+    if (newMode === "scored") {
+      setMode("scored");
+      setSelectedStudent(null);
     } else {
-      setMode(newMode);
-      if (newMode === "practice") {
-        setSelectedStudent(null);
-      }
+      setMode("practice");
+      setSelectedStudent(null);
     }
   };
 
