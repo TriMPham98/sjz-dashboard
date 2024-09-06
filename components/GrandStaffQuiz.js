@@ -255,7 +255,7 @@ const GrandStaffQuiz = () => {
         return;
       }
       setIsActive(true);
-      setTimeLeft(60);
+      setTimeLeft(mode === "practice" ? 30 : 60);
       setScore(0);
       setTotalGuesses(0);
       setFeedback("");
