@@ -25,6 +25,7 @@ const GrandStaffQuiz = () => {
   const { playSound, playNote } = useSound();
   const timerRef = useRef(null);
   const quizContainerRef = useRef(null);
+  const isFirstRender = useRef(true);
 
   const fetchStudents = useCallback(async () => {
     try {
@@ -42,11 +43,13 @@ const GrandStaffQuiz = () => {
   }, [fetchStudents]);
 
   useEffect(() => {
-    if (isActive) {
+    if (isActive && isFirstRender.current) {
       generateNewQuestion();
-    } else {
+      isFirstRender.current = false;
+    } else if (!isActive) {
       setCurrentNote(null);
       setPreviousNote(null);
+      isFirstRender.current = true;
     }
   }, [isActive]);
 
@@ -166,9 +169,9 @@ const GrandStaffQuiz = () => {
       setTotalGuesses(0);
       setFeedback("");
       setPreviousNote(null);
-      generateNewQuestion();
+      isFirstRender.current = true; // Reset the first render flag
     }
-  }, [isActive, mode, selectedStudent, generateNewQuestion]);
+  }, [isActive, mode, selectedStudent]);
 
   const triggerConfetti = useCallback(() => {
     if (quizContainerRef.current) {
