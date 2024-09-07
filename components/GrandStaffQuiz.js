@@ -22,7 +22,7 @@ const GrandStaffQuiz = () => {
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
   const [mode, setMode] = useState("practice");
 
-  const { playSound } = useSound();
+  const { playSound, playNote } = useSound();
   const timerRef = useRef(null);
   const quizContainerRef = useRef(null);
 
@@ -77,6 +77,9 @@ const GrandStaffQuiz = () => {
     setCurrentNote(correctNote);
     setPreviousNote(correctNote);
 
+    // Play the new note
+    playNote(correctNote.note, correctNote.octave);
+
     const newOptions = [
       `${correctNote.note}${correctNote.octave}`,
       ...generateWrongOptions(correctNote),
@@ -84,7 +87,7 @@ const GrandStaffQuiz = () => {
     shuffleArray(newOptions);
     setOptions(newOptions);
     setFeedback("");
-  }, [previousNote]);
+  }, [previousNote, playNote]);
 
   const generateWrongOptions = (correctNote) => {
     const wrongOptions = [];
