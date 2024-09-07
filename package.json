@@ -17,6 +17,7 @@
     "react-dom": "^18",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
+    "tone": "^15.0.4",
     "vexflow": "^4.2.5"
   },
   "devDependencies": {
