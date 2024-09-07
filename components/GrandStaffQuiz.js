@@ -9,6 +9,7 @@ const octaves = [3, 4];
 
 const GrandStaffQuiz = () => {
   const [currentNote, setCurrentNote] = useState(null);
+  const [previousNote, setPreviousNote] = useState(null);
   const [options, setOptions] = useState([]);
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
@@ -45,6 +46,7 @@ const GrandStaffQuiz = () => {
       generateNewQuestion();
     } else {
       setCurrentNote(null);
+      setPreviousNote(null);
     }
   }, [isActive]);
 
@@ -66,10 +68,14 @@ const GrandStaffQuiz = () => {
       };
     } while (
       (correctNote.octave === 4 && ["A", "B"].includes(correctNote.note)) ||
-      (correctNote.octave === 3 && correctNote.note < "C")
+      (correctNote.octave === 3 && correctNote.note < "C") ||
+      (previousNote &&
+        correctNote.note === previousNote.note &&
+        correctNote.octave === previousNote.octave)
     );
 
     setCurrentNote(correctNote);
+    setPreviousNote(correctNote);
 
     const newOptions = [
       `${correctNote.note}${correctNote.octave}`,
@@ -78,7 +84,7 @@ const GrandStaffQuiz = () => {
     shuffleArray(newOptions);
     setOptions(newOptions);
     setFeedback("");
-  }, []);
+  }, [previousNote]);
 
   const generateWrongOptions = (correctNote) => {
     const wrongOptions = [];
@@ -145,6 +151,7 @@ const GrandStaffQuiz = () => {
       setFeedback("Game reset. Press Start to begin a new game.");
       setMode("practice");
       setCurrentNote(null);
+      setPreviousNote(null);
     } else {
       if (mode === "scored" && !selectedStudent) {
         alert("Please select a student before starting the game.");
@@ -155,6 +162,7 @@ const GrandStaffQuiz = () => {
       setScore(0);
       setTotalGuesses(0);
       setFeedback("");
+      setPreviousNote(null);
       generateNewQuestion();
     }
   }, [isActive, mode, selectedStudent, generateNewQuestion]);
@@ -232,6 +240,7 @@ const GrandStaffQuiz = () => {
     setMode("practice");
     setSelectedStudent(null);
     setCurrentNote(null);
+    setPreviousNote(null);
   }, [
     mode,
     score,
@@ -291,6 +300,7 @@ const GrandStaffQuiz = () => {
       setScore(0);
       setTotalGuesses(0);
       setCurrentNote(null);
+      setPreviousNote(null);
     },
     [isActive]
   );
