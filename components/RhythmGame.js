@@ -76,6 +76,13 @@ const RhythmGame = () => {
     [beatDuration]
   );
 
+  const getColorForOffset = (offset) => {
+    const absOffset = Math.abs(offset);
+    if (absOffset <= 50) return "text-green-500";
+    if (absOffset <= 100) return "text-yellow-500";
+    return "text-red-500";
+  };
+
   useEffect(() => {
     const notes = drawStaff();
     animationRef.current = requestAnimationFrame(animate);
@@ -85,27 +92,36 @@ const RhythmGame = () => {
         event.preventDefault();
         const now = performance.now();
         const beatProgress = (now - startTimeRef.current) % beatDuration;
-        const errorMargin = 100; // milliseconds
+        let offset;
 
-        if (
-          beatProgress < errorMargin ||
-          beatProgress > beatDuration - errorMargin
-        ) {
-          setFeedback("On time!");
-          notes[currentBeat].setStyle({
-            fillStyle: "green",
-            strokeStyle: "green",
-          });
-        } else if (beatProgress < beatDuration / 2) {
-          setFeedback("Early!");
-          notes[currentBeat].setStyle({
-            fillStyle: "orange",
-            strokeStyle: "orange",
-          });
+        if (beatProgress <= beatDuration / 2) {
+          offset = Math.round(beatProgress);
         } else {
-          setFeedback("Late!");
-          notes[currentBeat].setStyle({ fillStyle: "red", strokeStyle: "red" });
+          offset = Math.round(beatProgress - beatDuration);
         }
+
+        const colorClass = getColorForOffset(offset);
+        setFeedback(
+          <span className={colorClass}>
+            {offset > 0 ? "+" : ""}
+            {offset} ms
+          </span>
+        );
+
+        notes[currentBeat].setStyle({
+          fillStyle:
+            colorClass === "text-green-500"
+              ? "green"
+              : colorClass === "text-yellow-500"
+              ? "orange"
+              : "red",
+          strokeStyle:
+            colorClass === "text-green-500"
+              ? "green"
+              : colorClass === "text-yellow-500"
+              ? "orange"
+              : "red",
+        });
 
         drawStaff();
       }
@@ -117,7 +133,7 @@ const RhythmGame = () => {
       window.removeEventListener("keydown", handleKeyDown);
       cancelAnimationFrame(animationRef.current);
     };
-  }, [animate, currentBeat, drawStaff]);
+  }, [animate, currentBeat, drawStaff, beatDuration]);
 
   return (
     <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
@@ -127,7 +143,7 @@ const RhythmGame = () => {
       <p className="text-center text-sm">Press spacebar on each beat</p>
 
       <div ref={staffRef} className="w-full bg-white rounded shadow-lg"></div>
-      <div className="text-center font-semibold">{feedback}</div>
+      <div className="text-center font-semibold text-2xl">{feedback}</div>
       <div className="text-center text-lg">Current Beat: {currentBeat + 1}</div>
     </div>
   );
