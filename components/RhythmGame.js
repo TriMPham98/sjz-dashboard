@@ -19,7 +19,7 @@ const RhythmGame = () => {
   const beatLineRef = useRef(null);
   const staveRef = useRef(null);
 
-  const bpm = 100; // Beats per minute
+  const bpm = 120; // Beats per minute
   const beatDuration = 60000 / bpm; // Duration of one beat in milliseconds
 
   const drawStaff = useCallback(() => {
