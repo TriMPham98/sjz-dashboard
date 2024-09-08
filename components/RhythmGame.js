@@ -16,6 +16,8 @@ const RhythmGame = () => {
   const timerRef = useRef(null);
   const lastBeatTimeRef = useRef(null);
   const notesRef = useRef([]);
+  const beatLineRef = useRef(null);
+  const staveRef = useRef(null);
 
   const bpm = 100; // Beats per minute
   const beatDuration = 60000 / bpm; // Duration of one beat in milliseconds
@@ -37,6 +39,7 @@ const RhythmGame = () => {
     const stave = new VF.Stave(10, 0, width - 20);
     stave.addClef("percussion").addTimeSignature("4/4");
     stave.setContext(context).draw();
+    staveRef.current = stave;
 
     const notes = [
       new VF.StaveNote({
@@ -68,6 +71,17 @@ const RhythmGame = () => {
 
     new VF.Formatter().joinVoices([voice]).format([voice], width - 50);
     voice.draw(context, stave);
+
+    // Create a red vertical line for the beat indicator
+    const beatLine = context.openGroup();
+    context.setStrokeStyle("red");
+    context.setLineWidth(2);
+    context.beginPath();
+    context.moveTo(notes[0].getAbsoluteX(), stave.getYForLine(0));
+    context.lineTo(notes[0].getAbsoluteX(), stave.getYForLine(4));
+    context.stroke();
+    context.closeGroup();
+    beatLineRef.current = beatLine;
   }, []);
 
   const animate = useCallback(
@@ -79,17 +93,30 @@ const RhythmGame = () => {
         lastBeatTimeRef.current = startTimeRef.current;
 
       const elapsedSinceStart = timestamp - startTimeRef.current;
-      const elapsedBeats = Math.floor(elapsedSinceStart / beatDuration);
+      const elapsedBeats = elapsedSinceStart / beatDuration;
+      const currentBeatFraction = elapsedBeats % 4;
 
-      if (elapsedBeats > currentBeat) {
-        setCurrentBeat(elapsedBeats % 4);
-        lastBeatTimeRef.current =
-          startTimeRef.current + elapsedBeats * beatDuration;
+      setCurrentBeat(Math.floor(currentBeatFraction));
+
+      // Update beat line position continuously
+      if (
+        beatLineRef.current &&
+        notesRef.current.length === 4 &&
+        staveRef.current
+      ) {
+        const startX = notesRef.current[0].getAbsoluteX();
+        const endX = staveRef.current.getX() + staveRef.current.getWidth();
+        const totalWidth = endX - startX;
+        const newX = startX + (currentBeatFraction / 4) * totalWidth;
+        beatLineRef.current.setAttribute(
+          "transform",
+          `translate(${newX - startX}, 0)`
+        );
       }
 
       animationRef.current = requestAnimationFrame(animate);
     },
-    [isActive, currentBeat, beatDuration]
+    [isActive, beatDuration]
   );
 
   useEffect(() => {
