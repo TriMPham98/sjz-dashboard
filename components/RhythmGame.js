@@ -10,7 +10,7 @@ const RhythmGame = () => {
   const startTimeRef = useRef(null);
   const animationRef = useRef(null);
 
-  const bpm = 60; // Beats per minute
+  const bpm = 100; // Beats per minute
   const beatDuration = 60000 / bpm; // Duration of one beat in milliseconds
 
   const drawStaff = useCallback(() => {
@@ -120,15 +120,15 @@ const RhythmGame = () => {
   }, [animate, currentBeat, drawStaff]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div
-        ref={staffRef}
-        className="w-full max-w-lg bg-white rounded shadow-lg"></div>
-      <div className="mt-4 text-2xl font-bold">{feedback}</div>
-      <div className="mt-2 text-lg">Current Beat: {currentBeat + 1}</div>
-      <div className="mt-4 text-sm text-gray-600">
-        Press spacebar on each beat
-      </div>
+    <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
+      <h2 className="text-xl font-bold text-center">
+        Test Your Rhythm Skills 🥁 🎵
+      </h2>
+      <p className="text-center text-sm">Press spacebar on each beat</p>
+
+      <div ref={staffRef} className="w-full bg-white rounded shadow-lg"></div>
+      <div className="text-center font-semibold">{feedback}</div>
+      <div className="text-center text-lg">Current Beat: {currentBeat + 1}</div>
     </div>
   );
 };
