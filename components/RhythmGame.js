@@ -6,9 +6,16 @@ const VF = Vex.Flow;
 const RhythmGame = () => {
   const [feedback, setFeedback] = useState("");
   const [currentBeat, setCurrentBeat] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [totalOffset, setTotalOffset] = useState(0);
+  const [hitCount, setHitCount] = useState(0);
   const staffRef = useRef(null);
   const startTimeRef = useRef(null);
   const animationRef = useRef(null);
+  const timerRef = useRef(null);
+  const lastBeatTimeRef = useRef(null);
+  const notesRef = useRef([]);
 
   const bpm = 100; // Beats per minute
   const beatDuration = 60000 / bpm; // Duration of one beat in milliseconds
@@ -54,74 +61,78 @@ const RhythmGame = () => {
       }).setStave(stave),
     ];
 
+    notesRef.current = notes;
+
     const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
     voice.addTickables(notes);
 
     new VF.Formatter().joinVoices([voice]).format([voice], width - 50);
     voice.draw(context, stave);
-
-    return notes;
   }, []);
 
   const animate = useCallback(
     (timestamp) => {
-      if (!startTimeRef.current) startTimeRef.current = timestamp;
-      const elapsed = timestamp - startTimeRef.current;
-      const currentBeatIndex = Math.floor(elapsed / beatDuration) % 4;
+      if (!isActive) return;
 
-      setCurrentBeat(currentBeatIndex);
+      if (!startTimeRef.current) startTimeRef.current = timestamp;
+      if (!lastBeatTimeRef.current)
+        lastBeatTimeRef.current = startTimeRef.current;
+
+      const elapsedSinceStart = timestamp - startTimeRef.current;
+      const elapsedBeats = Math.floor(elapsedSinceStart / beatDuration);
+
+      if (elapsedBeats > currentBeat) {
+        setCurrentBeat(elapsedBeats % 4);
+        lastBeatTimeRef.current =
+          startTimeRef.current + elapsedBeats * beatDuration;
+      }
 
       animationRef.current = requestAnimationFrame(animate);
     },
-    [beatDuration]
+    [isActive, currentBeat, beatDuration]
   );
 
-  const getColorForOffset = (offset) => {
-    const absOffset = Math.abs(offset);
-    if (absOffset <= 50) return "text-green-500";
-    if (absOffset <= 100) return "text-yellow-500";
-    return "text-red-500";
-  };
-
   useEffect(() => {
-    const notes = drawStaff();
-    animationRef.current = requestAnimationFrame(animate);
+    drawStaff();
 
     const handleKeyDown = (event) => {
-      if (event.code === "Space") {
+      if (event.code === "Space" && isActive) {
         event.preventDefault();
         const now = performance.now();
-        const beatProgress = (now - startTimeRef.current) % beatDuration;
-        let offset;
+        const elapsedSinceLastBeat = now - lastBeatTimeRef.current;
+        let offset = elapsedSinceLastBeat % beatDuration;
 
-        if (beatProgress <= beatDuration / 2) {
-          offset = Math.round(beatProgress);
-        } else {
-          offset = Math.round(beatProgress - beatDuration);
+        if (offset > beatDuration / 2) {
+          offset -= beatDuration;
         }
+
+        setTotalOffset((prev) => prev + Math.abs(offset));
+        setHitCount((prev) => prev + 1);
 
         const colorClass = getColorForOffset(offset);
         setFeedback(
           <span className={colorClass}>
             {offset > 0 ? "+" : ""}
-            {offset} ms
+            {Math.round(offset)} ms
           </span>
         );
 
-        notes[currentBeat].setStyle({
-          fillStyle:
-            colorClass === "text-green-500"
-              ? "green"
-              : colorClass === "text-yellow-500"
-              ? "orange"
-              : "red",
-          strokeStyle:
-            colorClass === "text-green-500"
-              ? "green"
-              : colorClass === "text-yellow-500"
-              ? "orange"
-              : "red",
-        });
+        if (notesRef.current[currentBeat]) {
+          notesRef.current[currentBeat].setStyle({
+            fillStyle:
+              colorClass === "text-green-500"
+                ? "green"
+                : colorClass === "text-yellow-500"
+                ? "orange"
+                : "red",
+            strokeStyle:
+              colorClass === "text-green-500"
+                ? "green"
+                : colorClass === "text-yellow-500"
+                ? "orange"
+                : "red",
+          });
+        }
 
         drawStaff();
       }
@@ -131,9 +142,72 @@ const RhythmGame = () => {
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      cancelAnimationFrame(animationRef.current);
     };
-  }, [animate, currentBeat, drawStaff, beatDuration]);
+  }, [animate, currentBeat, drawStaff, beatDuration, isActive]);
+
+  useEffect(() => {
+    if (isActive) {
+      animationRef.current = requestAnimationFrame(animate);
+    } else {
+      cancelAnimationFrame(animationRef.current);
+    }
+
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [isActive, animate]);
+
+  useEffect(() => {
+    if (isActive && timeLeft > 0) {
+      timerRef.current = setTimeout(
+        () => setTimeLeft((prev) => prev - 1),
+        1000
+      );
+    } else if (timeLeft === 0) {
+      endGame();
+    }
+    return () => clearTimeout(timerRef.current);
+  }, [isActive, timeLeft]);
+
+  const startGame = useCallback(() => {
+    if (isActive) {
+      setIsActive(false);
+      clearTimeout(timerRef.current);
+      cancelAnimationFrame(animationRef.current);
+      setFeedback("Game reset. Press Start to begin a new game.");
+    } else {
+      setIsActive(true);
+      setTimeLeft(30);
+      setTotalOffset(0);
+      setHitCount(0);
+      setFeedback("");
+      setCurrentBeat(0);
+      startTimeRef.current = null;
+      lastBeatTimeRef.current = null;
+      drawStaff();
+      requestAnimationFrame(animate);
+    }
+  }, [isActive, animate, drawStaff]);
+
+  const endGame = () => {
+    setIsActive(false);
+    clearTimeout(timerRef.current);
+    cancelAnimationFrame(animationRef.current);
+    const averageOffset =
+      hitCount > 0 ? (totalOffset / hitCount).toFixed(2) : 0;
+    setFeedback(`Game Over! Average offset: ${averageOffset} ms`);
+  };
+
+  const getColorForOffset = (offset) => {
+    const absOffset = Math.abs(offset);
+    if (absOffset <= 50) return "text-green-500";
+    if (absOffset <= 100) return "text-yellow-500";
+    return "text-red-500";
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
   return (
     <div className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
@@ -145,6 +219,19 @@ const RhythmGame = () => {
       <div ref={staffRef} className="w-full bg-white rounded shadow-lg"></div>
       <div className="text-center font-semibold text-2xl">{feedback}</div>
       <div className="text-center text-lg">Current Beat: {currentBeat + 1}</div>
+      <div className="text-center">
+        <p className="font-bold text-xl">{formatTime(timeLeft)}</p>
+        <button
+          onClick={startGame}
+          className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+          {isActive ? "Reset" : "Start"}
+        </button>
+      </div>
+      {hitCount > 0 && (
+        <div className="text-center">
+          <p>Average Offset: {(totalOffset / hitCount).toFixed(2)} ms</p>
+        </div>
+      )}
     </div>
   );
 };
