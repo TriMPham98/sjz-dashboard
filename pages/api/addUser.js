@@ -9,7 +9,7 @@ export default async function handler(req, res) {
         "INSERT INTO users (first_name, last_name, grade, main_instrument, role) VALUES (?, ?, ?, ?, ?)",
         [firstName, lastName, grade, mainInstrument, role]
       );
-      res.status(200).json({ message: "Student added successfully" });
+      res.status(200).json({ message: "User added successfully" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

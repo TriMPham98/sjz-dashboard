@@ -160,7 +160,9 @@ export default function UserList({ triggerFetch, onEditUser }) {
                     <td className="px-4 py-2">
                       <RolePill role={user.role} />
                     </td>
-                    <td className="px-4 py-2">{user.grade}</td>
+                    <td className="px-4 py-2">
+                      {user.role === "Student" ? user.grade : "-"}
+                    </td>
                     <td className="px-4 py-2">{user.main_instrument}</td>
                     <td className="px-4 py-2">{user.score}</td>
                   </tr>

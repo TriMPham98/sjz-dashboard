@@ -18,7 +18,7 @@ export default function UserForm({
     if (editingUser) {
       setFirstName(editingUser.first_name);
       setLastName(editingUser.last_name);
-      setGrade(editingUser.grade.toString());
+      setGrade(editingUser.grade === "-" ? "" : editingUser.grade.toString());
       setMainInstrument(editingUser.main_instrument);
       setRole(editingUser.role || "Student");
     }
@@ -32,6 +32,8 @@ export default function UserForm({
     const url = editingUser ? "/api/editUser" : "/api/addUser";
     const method = editingUser ? "PUT" : "POST";
 
+    const gradeValue = role === "Student" ? grade : "-";
+
     try {
       const response = await fetch(url, {
         method: method,
@@ -42,7 +44,7 @@ export default function UserForm({
           id: editingUser?.id,
           firstName,
           lastName,
-          grade,
+          grade: gradeValue,
           mainInstrument,
           role,
         }),
@@ -114,23 +116,25 @@ export default function UserForm({
             autoComplete="off"
           />
         </div>
-        <div className="mb-4">
-          <label
-            className="block text-white text-sm font-bold mb-2"
-            htmlFor="grade">
-            Grade
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
-            id="grade"
-            type="number"
-            placeholder="Enter grade"
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            required
-            autoComplete="off"
-          />
-        </div>
+        {role === "Student" && (
+          <div className="mb-4">
+            <label
+              className="block text-white text-sm font-bold mb-2"
+              htmlFor="grade">
+              Grade
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
+              id="grade"
+              type="number"
+              placeholder="Enter grade"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+              required
+              autoComplete="off"
+            />
+          </div>
+        )}
         <div className="mb-4">
           <label
             className="block text-white text-sm font-bold mb-2"
