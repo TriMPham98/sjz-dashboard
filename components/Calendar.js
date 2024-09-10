@@ -93,6 +93,8 @@ export default function Calendar({ events }) {
         defaultView="week"
         onReady={handleOnReady}
         scrollToTime={new Date()}
+        step={30}
+        timeslots={1}
         {...calendarStyle}
       />
     </>
