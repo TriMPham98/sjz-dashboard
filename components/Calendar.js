@@ -20,7 +20,7 @@ const calendarStyle = {
   }),
   eventPropGetter: (event) => ({
     style: {
-      backgroundColor: event.color || "#d4d4d4", // Use event.color if available, otherwise default to #d4d4d4
+      backgroundColor: event.color ? `${event.color}80` : "#d4d4d480", // Add 80 for 50% opacity
       color: "#333",
       border: "none",
     },
@@ -56,10 +56,10 @@ const customCSS = `
     background-color: #d8d8d8 !important;
   }
   .rbc-event {
-    background-color: #c8c8c8;
+    background-color: rgba(200, 200, 200, 0.5);
   }
   .rbc-event.rbc-selected {
-    background-color: #b8b8b8;
+    background-color: rgba(184, 184, 184, 0.5);
   }
   .rbc-day-bg + .rbc-day-bg, .rbc-month-row + .rbc-month-row {
     border-color: #ccc;
