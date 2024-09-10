@@ -1,6 +1,23 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PasswordPopup from "./PasswordPopup";
 
+const RolePill = ({ role }) => {
+  const colors = {
+    student: "bg-green-500",
+    alumni: "bg-blue-500",
+    teacher: "bg-red-500",
+  };
+  const baseClasses = "px-2 py-1 rounded-full text-white text-xs font-bold";
+  return (
+    <span
+      className={`${baseClasses} ${
+        colors[role.toLowerCase()] || "bg-gray-500"
+      }`}>
+      {role}
+    </span>
+  );
+};
+
 export default function UserList({ triggerFetch, onEditUser }) {
   const [users, setUsers] = useState([]);
   const [sortConfig, setSortConfig] = useState({
@@ -143,11 +160,13 @@ export default function UserList({ triggerFetch, onEditUser }) {
                     <td className="px-4 py-2">{user.grade}</td>
                     <td className="px-4 py-2">{user.main_instrument}</td>
                     <td className="px-4 py-2">{user.score}</td>
-                    <td className="px-4 py-2">{user.role}</td>
+                    <td className="px-4 py-2">
+                      <RolePill role={user.role} />
+                    </td>
                   </tr>
                   {selectedUserId === user.id && (
                     <tr className="bg-gray-900">
-                      <td colSpan="5" className="px-4 py-2">
+                      <td colSpan="6" className="px-4 py-2">
                         <div className="flex justify-end space-x-2">
                           <button
                             onClick={() => handleEdit(user)}
