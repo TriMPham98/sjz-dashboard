@@ -169,7 +169,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
           </table>
         </div>
       ) : (
-        <p className="text-gray-400">No students registered yet.</p>
+        <p className="text-gray-400">No members registered yet.</p>
       )}
       {showPasswordPopup && (
         <PasswordPopup

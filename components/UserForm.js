@@ -53,8 +53,8 @@ export default function UserForm({
       if (response.ok) {
         setMessage(
           editingUser
-            ? "Student updated successfully!"
-            : "Student added successfully!"
+            ? "Member updated successfully!"
+            : "Member added successfully!"
         );
         if (!editingUser) {
           setFirstName("");
@@ -172,7 +172,7 @@ export default function UserForm({
           <button
             className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit">
-            {editingUser ? "Update Student" : "Add Student"}
+            {editingUser ? "Update Member" : "Add Member"}
           </button>
           <button
             className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

@@ -71,7 +71,7 @@ export default function Home() {
     }
   }, [activeTab]);
 
-  const tabs = ["dashboard", "quizzes", "resources", "students"];
+  const tabs = ["dashboard", "quizzes", "resources", "members"]; // Changed "students" to "members"
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -128,21 +128,21 @@ export default function Home() {
             </>
           )}
           {activeTab === "resources" && <Resources />}
-          {activeTab === "students" && (
+          {activeTab === "members" && ( // Changed from "students" to "members"
             <>
               <div className="flex justify-between items-center mb-8">
                 <h1 className="text-4xl font-bold text-gray-100">
                   {showAddForm
                     ? editingUser
-                      ? "Edit Student"
-                      : "Add New Student"
-                    : "Registered Students"}
+                      ? "Edit Member"
+                      : "Add New Member"
+                    : "Members"}
                 </h1>
                 {!showAddForm && (
                   <button
                     className="bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded"
                     onClick={handleAddStudentClick}>
-                    Add Student
+                    Add Member
                   </button>
                 )}
               </div>
