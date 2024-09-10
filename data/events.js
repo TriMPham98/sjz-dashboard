@@ -9,8 +9,8 @@ export const useEvents = () => {
     const daysOfWeek = [1, 2, 3, 4]; // Monday, Tuesday, Wednesday, Thursday
     const startDate = moment().startOf("week").add(1, "day"); // Start from this week's Monday
 
-    for (let i = 0; i < 52; i++) {
-      // Create events for the next 52 weeks
+    for (let i = 0; i < 40; i++) {
+      // Create events for the next 40 weeks
       daysOfWeek.forEach((day) => {
         let start, end;
 
