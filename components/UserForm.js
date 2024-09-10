@@ -12,6 +12,7 @@ export default function UserForm({
   const [mainInstrument, setMainInstrument] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [role, setRole] = useState("Student");
 
   useEffect(() => {
     if (editingUser) {
@@ -19,6 +20,7 @@ export default function UserForm({
       setLastName(editingUser.last_name);
       setGrade(editingUser.grade.toString());
       setMainInstrument(editingUser.main_instrument);
+      setRole(editingUser.role || "Student");
     }
   }, [editingUser]);
 
@@ -42,6 +44,7 @@ export default function UserForm({
           lastName,
           grade,
           mainInstrument,
+          role,
         }),
       });
 
@@ -146,6 +149,23 @@ export default function UserForm({
             <option value="piano">Piano</option>
             <option value="drums">Drums</option>
             <option value="vocals">Vocals</option>
+          </select>
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-white text-sm font-bold mb-2"
+            htmlFor="role">
+            Role
+          </label>
+          <select
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800"
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required>
+            <option value="Student">Student</option>
+            <option value="Alumni">Alumni</option>
+            <option value="Teacher">Teacher</option>
           </select>
         </div>
         <div className="flex items-center justify-between">

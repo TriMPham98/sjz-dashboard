@@ -109,6 +109,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
                   "grade",
                   "main_instrument",
                   "score",
+                  "role",
                 ].map((key) => (
                   <th
                     key={key}
@@ -142,6 +143,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
                     <td className="px-4 py-2">{user.grade}</td>
                     <td className="px-4 py-2">{user.main_instrument}</td>
                     <td className="px-4 py-2">{user.score}</td>
+                    <td className="px-4 py-2">{user.role}</td>
                   </tr>
                   {selectedUserId === user.id && (
                     <tr className="bg-gray-900">

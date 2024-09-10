@@ -3,11 +3,11 @@ import { openDb } from "../../lib/db";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const db = await openDb();
-    const { firstName, lastName, grade, mainInstrument } = req.body;
+    const { firstName, lastName, grade, mainInstrument, role } = req.body;
     try {
       await db.run(
-        "INSERT INTO users (first_name, last_name, grade, main_instrument) VALUES (?, ?, ?, ?)",
-        [firstName, lastName, grade, mainInstrument]
+        "INSERT INTO users (first_name, last_name, grade, main_instrument, role) VALUES (?, ?, ?, ?, ?)",
+        [firstName, lastName, grade, mainInstrument, role]
       );
       res.status(200).json({ message: "Student added successfully" });
     } catch (error) {
