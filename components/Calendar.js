@@ -23,6 +23,8 @@ const calendarStyle = {
       backgroundColor: event.color ? `${event.color}80` : "#d4d4d480", // Add 80 for 50% opacity
       color: "#333",
       border: "none",
+      fontSize: "0.8em", // Reduce font size to fit more text
+      padding: "2px 4px", // Add some padding
     },
   }),
 };
@@ -73,6 +75,12 @@ const customCSS = `
   }
   .rbc-date-cell {
     padding: 4px;
+  }
+  .rbc-event-content {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-weight: bold;
   }
 `;
 
