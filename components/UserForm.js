@@ -153,6 +153,8 @@ export default function UserForm({
             <option value="piano">Piano</option>
             <option value="drums">Drums</option>
             <option value="vocals">Vocals</option>
+            <option value="violin">Violin</option>
+            <option value="saxophone">Saxophone</option>
           </select>
         </div>
         <div className="mb-4">
