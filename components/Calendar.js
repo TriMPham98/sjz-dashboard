@@ -76,34 +76,7 @@ const customCSS = `
   }
 `;
 
-export default function Calendar({
-  events,
-  addEvent,
-  updateEvent,
-  deleteEvent,
-}) {
-  const handleSelectSlot = ({ start, end }) => {
-    const title = window.prompt("New Event name");
-    if (title) {
-      addEvent({ start, end, title, type: "regular", color: "#d4d4d4" }); // Default color for regular events
-    }
-  };
-
-  const handleSelectEvent = (event) => {
-    const action = window.prompt(
-      'Enter "edit" to edit, or "delete" to remove',
-      "edit"
-    );
-    if (action === "edit") {
-      const title = window.prompt("Enter new title", event.title);
-      if (title) {
-        updateEvent({ ...event, title });
-      }
-    } else if (action === "delete") {
-      deleteEvent(event.id);
-    }
-  };
-
+export default function Calendar({ events }) {
   return (
     <>
       <style>{customCSS}</style>
@@ -112,9 +85,6 @@ export default function Calendar({
         events={events}
         startAccessor="start"
         endAccessor="end"
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
-        selectable
         {...calendarStyle}
       />
     </>
