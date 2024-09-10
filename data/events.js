@@ -36,6 +36,7 @@ export const useEvents = () => {
           start: start.toDate(),
           end: end.toDate(),
           type: "weekly",
+          color: day === 4 ? "#2196F3" : "#4CAF50", // Blue for Thursday, Green for other days
         });
       });
 
@@ -55,6 +56,7 @@ export const useEvents = () => {
         start: tuesdayLunchStart.toDate(),
         end: tuesdayLunchEnd.toDate(),
         type: "weekly",
+        color: "#FFC107", // Amber for Tuesday lunch
       });
 
       // Add Lunch events for Thursdays
@@ -73,6 +75,7 @@ export const useEvents = () => {
         start: thursdayLunchStart.toDate(),
         end: thursdayLunchEnd.toDate(),
         type: "weekly",
+        color: "#FF9800", // Orange for Thursday lunch
       });
     }
 

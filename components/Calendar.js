@@ -20,14 +20,7 @@ const calendarStyle = {
   }),
   eventPropGetter: (event) => ({
     style: {
-      backgroundColor:
-        event.type === "weekly"
-          ? "#d4d4d4"
-          : event.type === "holiday"
-          ? "#e0e0e0"
-          : event.type === "hourly"
-          ? "#c8c8c8"
-          : "#dcdcdc",
+      backgroundColor: event.color || "#d4d4d4", // Use event.color if available, otherwise default to #d4d4d4
       color: "#333",
       border: "none",
     },
@@ -92,7 +85,7 @@ export default function Calendar({
   const handleSelectSlot = ({ start, end }) => {
     const title = window.prompt("New Event name");
     if (title) {
-      addEvent({ start, end, title, type: "regular" });
+      addEvent({ start, end, title, type: "regular", color: "#d4d4d4" }); // Default color for regular events
     }
   };
 
