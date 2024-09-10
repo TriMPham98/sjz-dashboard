@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -77,6 +77,11 @@ const customCSS = `
 `;
 
 export default function Calendar({ events }) {
+  const handleOnReady = useCallback((calendarApi) => {
+    const now = new Date();
+    calendarApi.scrollToTime(now);
+  }, []);
+
   return (
     <>
       <style>{customCSS}</style>
@@ -85,6 +90,9 @@ export default function Calendar({ events }) {
         events={events}
         startAccessor="start"
         endAccessor="end"
+        defaultView="week"
+        onReady={handleOnReady}
+        scrollToTime={new Date()}
         {...calendarStyle}
       />
     </>
