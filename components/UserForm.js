@@ -148,13 +148,14 @@ export default function UserForm({
             onChange={(e) => setMainInstrument(e.target.value)}
             required>
             <option value="">Select an instrument</option>
-            <option value="electric guitar">Electric Guitar</option>
             <option value="bass">Bass</option>
-            <option value="piano">Piano</option>
             <option value="drums">Drums</option>
-            <option value="vocals">Vocals</option>
-            <option value="violin">Violin</option>
+            <option value="electric guitar">Electric Guitar</option>
+            <option value="piano">Piano</option>
             <option value="saxophone">Saxophone</option>
+            <option value="ukulele">Ukulele</option>
+            <option value="violin">Violin</option>
+            <option value="vocals">Vocals</option>
           </select>
         </div>
         <div className="mb-4">
@@ -190,9 +191,7 @@ export default function UserForm({
       </form>
       {message && (
         <p
-          className={`text-center ${
-            isError ? "text-gray-400" : "text-white"
-          }`}>
+          className={`text-center ${isError ? "text-gray-400" : "text-white"}`}>
           {message}
         </p>
       )}
