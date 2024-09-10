@@ -5,7 +5,7 @@ import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
 import Resources from "../components/Resources";
-import Quizzes from "../components/Quizzes"; // New import
+import Quizzes from "../components/Quizzes";
 import Footer from "../components/Footer";
 import PasswordPopup from "../components/PasswordPopup";
 
@@ -71,7 +71,7 @@ export default function Home() {
     }
   }, [activeTab]);
 
-  const tabs = ["dashboard", "quizzes", "resources", "members"]; // Changed "students" to "members"
+  const tabs = ["dashboard", "quizzes", "resources", "members"];
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -128,7 +128,7 @@ export default function Home() {
             </>
           )}
           {activeTab === "resources" && <Resources />}
-          {activeTab === "members" && ( // Changed from "students" to "members"
+          {activeTab === "members" && (
             <>
               <div className="flex justify-between items-center mb-8">
                 <h1 className="text-4xl font-bold text-gray-100">
