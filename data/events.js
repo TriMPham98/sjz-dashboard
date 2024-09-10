@@ -10,10 +10,9 @@ export const useEvents = () => {
     const startDate = moment().startOf("week").add(1, "day"); // Start from this week's Monday
 
     for (let i = 0; i < 40; i++) {
-      // Changed from 52 to 40 weeks
       // Create events for the next 40 weeks
       afterschoolDays.forEach((day) => {
-        let start, end;
+        let start;
 
         if (day === 4) {
           // Thursday
@@ -21,14 +20,15 @@ export const useEvents = () => {
             .add(i, "weeks")
             .day(day)
             .set({ hour: 13, minute: 55 });
-          end = moment(start).set({ hour: 17, minute: 30 });
         } else {
           start = moment(startDate)
             .add(i, "weeks")
             .day(day)
             .set({ hour: 14, minute: 45 });
-          end = moment(start).set({ hour: 17, minute: 30 });
         }
+
+        // Set end time to 5:00 PM (17:00) for all afterschool events
+        const end = moment(start).set({ hour: 17, minute: 0 });
 
         allEvents.push({
           id: `afterschool-${start.format("YYYY-MM-DD")}`,
