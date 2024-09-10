@@ -21,6 +21,7 @@ const GrandStaffQuiz = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [tempStudentSelection, setTempStudentSelection] = useState(null);
   const [mode, setMode] = useState("practice");
+  const [competitiveTriesLeft, setCompetitiveTriesLeft] = useState(3);
 
   const { playSound, playNote } = useSound();
   const timerRef = useRef(null);
@@ -80,7 +81,6 @@ const GrandStaffQuiz = () => {
     setCurrentNote(correctNote);
     setPreviousNote(correctNote);
 
-    // Play the new note
     playNote(correctNote.note, correctNote.octave);
 
     const newOptions = [
@@ -158,6 +158,7 @@ const GrandStaffQuiz = () => {
       setMode("practice");
       setCurrentNote(null);
       setPreviousNote(null);
+      setCompetitiveTriesLeft(3);
     } else {
       if (mode === "scored" && !selectedStudent) {
         alert("Please select a student before starting the game.");
@@ -169,7 +170,7 @@ const GrandStaffQuiz = () => {
       setTotalGuesses(0);
       setFeedback("");
       setPreviousNote(null);
-      isFirstRender.current = true; // Reset the first render flag
+      isFirstRender.current = true;
     }
   }, [isActive, mode, selectedStudent]);
 
@@ -242,9 +243,18 @@ const GrandStaffQuiz = () => {
           }`
         );
       }
+
+      setCompetitiveTriesLeft((prev) => {
+        const newTriesLeft = prev - 1;
+        if (newTriesLeft === 0) {
+          setMode("practice");
+          setSelectedStudent(null);
+          return 3;
+        }
+        return newTriesLeft;
+      });
     }
-    setMode("practice");
-    setSelectedStudent(null);
+
     setCurrentNote(null);
     setPreviousNote(null);
   }, [
@@ -280,6 +290,7 @@ const GrandStaffQuiz = () => {
         setSelectedStudent(tempStudentSelection);
         setShowPasswordPopup(false);
         setMode("scored");
+        setCompetitiveTriesLeft(3);
       } else {
         alert("Incorrect password");
       }
@@ -307,6 +318,7 @@ const GrandStaffQuiz = () => {
       setTotalGuesses(0);
       setCurrentNote(null);
       setPreviousNote(null);
+      setCompetitiveTriesLeft(3);
     },
     [isActive]
   );
@@ -359,6 +371,11 @@ const GrandStaffQuiz = () => {
               </option>
             ))}
           </select>
+          {selectedStudent && (
+            <p className="mt-2 text-center">
+              Competitive tries left: {competitiveTriesLeft}
+            </p>
+          )}
         </div>
       )}
 
