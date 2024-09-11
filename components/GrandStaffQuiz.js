@@ -27,6 +27,7 @@ const GrandStaffQuiz = () => {
   const timerRef = useRef(null);
   const quizContainerRef = useRef(null);
   const isFirstRender = useRef(true);
+  const endGameRef = useRef(false);
 
   const fetchStudents = useCallback(async () => {
     try {
@@ -151,6 +152,7 @@ const GrandStaffQuiz = () => {
   }, [score, totalGuesses]);
 
   const startGame = useCallback(() => {
+    console.log("startGame called, current tries:", competitiveTriesLeft);
     if (isActive) {
       setIsActive(false);
       clearTimeout(timerRef.current);
@@ -158,21 +160,21 @@ const GrandStaffQuiz = () => {
       setMode("practice");
       setCurrentNote(null);
       setPreviousNote(null);
-      setCompetitiveTriesLeft(3);
     } else {
       if (mode === "scored" && !selectedStudent) {
         alert("Please select a student before starting the game.");
         return;
       }
       setIsActive(true);
-      setTimeLeft(mode === "practice" ? 30 : 60);
+      setTimeLeft(mode === "practice" ? 30 : 3);
       setScore(0);
       setTotalGuesses(0);
       setFeedback("");
       setPreviousNote(null);
       isFirstRender.current = true;
+      endGameRef.current = false; // Reset endGameRef when starting a new game
     }
-  }, [isActive, mode, selectedStudent]);
+  }, [isActive, mode, selectedStudent, competitiveTriesLeft]);
 
   const triggerConfetti = useCallback(() => {
     if (quizContainerRef.current) {
@@ -189,6 +191,9 @@ const GrandStaffQuiz = () => {
   }, []);
 
   const endGame = useCallback(async () => {
+    if (endGameRef.current) return; // Prevent multiple calls
+    endGameRef.current = true;
+
     setIsActive(false);
     clearTimeout(timerRef.current);
 
@@ -245,11 +250,12 @@ const GrandStaffQuiz = () => {
       }
 
       setCompetitiveTriesLeft((prev) => {
+        console.log("Previous tries:", prev);
         const newTriesLeft = prev - 1;
+        console.log("New tries:", newTriesLeft);
         if (newTriesLeft === 0) {
           setMode("practice");
           setSelectedStudent(null);
-          return 3;
         }
         return newTriesLeft;
       });
@@ -257,6 +263,11 @@ const GrandStaffQuiz = () => {
 
     setCurrentNote(null);
     setPreviousNote(null);
+
+    // Reset the endGameRef after a short delay
+    setTimeout(() => {
+      endGameRef.current = false;
+    }, 100);
   }, [
     mode,
     score,
