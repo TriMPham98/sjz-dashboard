@@ -20,10 +20,6 @@ const RolePill = ({ role }) => {
 
 export default function UserList({ triggerFetch, onEditUser }) {
   const [users, setUsers] = useState([]);
-  const [sortConfig, setSortConfig] = useState({
-    key: "grade",
-    direction: "ascending",
-  });
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [passwordAction, setPasswordAction] = useState(null);
@@ -82,32 +78,18 @@ export default function UserList({ triggerFetch, onEditUser }) {
     }
   };
 
-  const requestSort = useCallback(
-    (key) => {
-      let direction = "ascending";
-      if (sortConfig.key === key && sortConfig.direction === "ascending") {
-        direction = "descending";
-      }
-      setSortConfig({ key, direction });
-    },
-    [sortConfig]
-  );
-
   const sortedUsers = React.useMemo(() => {
-    let sortableUsers = [...users];
-    if (sortConfig.key !== null) {
-      sortableUsers.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableUsers;
-  }, [users, sortConfig]);
+    return [...users].sort((a, b) => {
+      const roleOrder = { Student: 0, Alumni: 1, Teacher: 2 };
+      if (roleOrder[a.role] !== roleOrder[b.role]) {
+        return roleOrder[a.role] - roleOrder[b.role];
+      }
+      if (a.role === "Student") {
+        return a.grade - b.grade;
+      }
+      return 0;
+    });
+  }, [users]);
 
   const handleRowClick = (userId) => {
     setSelectedUserId(selectedUserId === userId ? null : userId);
@@ -128,21 +110,13 @@ export default function UserList({ triggerFetch, onEditUser }) {
                   "main_instrument",
                   "score",
                 ].map((key) => (
-                  <th
-                    key={key}
-                    className="px-4 py-2 text-left cursor-pointer hover:bg-gray-900"
-                    onClick={() => requestSort(key)}>
+                  <th key={key} className="px-4 py-2 text-left">
                     {key
                       .split("_")
                       .map(
                         (word) => word.charAt(0).toUpperCase() + word.slice(1)
                       )
                       .join(" ")}
-                    {sortConfig.key === key && (
-                      <span>
-                        {sortConfig.direction === "ascending" ? " ▲" : " ▼"}
-                      </span>
-                    )}
                   </th>
                 ))}
               </tr>
