@@ -1,5 +1,4 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import { openDb } from "../../lib/db";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -13,15 +12,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const db = await open({
-      filename: "./groove_gamer.sqlite", // Updated database name
-      driver: sqlite3.Database,
-    });
-
+    const db = await openDb();
     await db.run("UPDATE users SET score = ? WHERE id = ?", [score, id]);
-
-    await db.close();
-
     res.status(200).json({ message: "Score updated successfully" });
   } catch (error) {
     console.error("Error updating score:", error);
