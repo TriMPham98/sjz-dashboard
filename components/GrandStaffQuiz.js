@@ -152,7 +152,6 @@ const GrandStaffQuiz = () => {
   }, [score, totalGuesses]);
 
   const startGame = useCallback(() => {
-    console.log("startGame called, current tries:", competitiveTriesLeft);
     if (isActive) {
       setIsActive(false);
       clearTimeout(timerRef.current);
@@ -232,7 +231,6 @@ const GrandStaffQuiz = () => {
           playSound("highScoreSuccess");
           triggerConfetti();
         } catch (error) {
-          console.error("Error updating score:", error);
           setFeedback(
             `Your score: ${score} with ${accuracy.toFixed(
               2
@@ -250,9 +248,7 @@ const GrandStaffQuiz = () => {
       }
 
       setCompetitiveTriesLeft((prev) => {
-        console.log("Previous tries:", prev);
         const newTriesLeft = prev - 1;
-        console.log("New tries:", newTriesLeft);
         if (newTriesLeft === 0) {
           setMode("practice");
           setSelectedStudent(null);
