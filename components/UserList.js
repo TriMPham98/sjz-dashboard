@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import PasswordPopup from "./PasswordPopup";
 
 const RolePill = ({ role }) => {
@@ -102,23 +102,18 @@ export default function UserList({ triggerFetch, onEditUser }) {
           <table className="min-w-full bg-black text-white">
             <thead>
               <tr>
-                {[
-                  "first_name",
-                  "last_name",
-                  "role",
-                  "grade",
-                  "main_instrument",
-                  "score",
-                ].map((key) => (
-                  <th key={key} className="px-4 py-2 text-left">
-                    {key
-                      .split("_")
-                      .map(
-                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                      )
-                      .join(" ")}
-                  </th>
-                ))}
+                {["name", "role", "grade", "main_instrument", "score"].map(
+                  (key) => (
+                    <th key={key} className="px-4 py-2 text-left">
+                      {key
+                        .split("_")
+                        .map(
+                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(" ")}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
@@ -129,8 +124,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
                       selectedUserId === user.id ? "bg-gray-900" : ""
                     }`}
                     onClick={() => handleRowClick(user.id)}>
-                    <td className="px-4 py-2">{user.first_name}</td>
-                    <td className="px-4 py-2">{user.last_name}</td>
+                    <td className="px-4 py-2">{`${user.first_name} ${user.last_name}`}</td>
                     <td className="px-4 py-2">
                       <RolePill role={user.role} />
                     </td>
@@ -142,7 +136,7 @@ export default function UserList({ triggerFetch, onEditUser }) {
                   </tr>
                   {selectedUserId === user.id && (
                     <tr className="bg-gray-900">
-                      <td colSpan="6" className="px-4 py-2">
+                      <td colSpan="5" className="px-4 py-2">
                         <div className="flex justify-end space-x-2">
                           <button
                             onClick={() => handleEdit(user)}
