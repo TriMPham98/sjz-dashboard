@@ -13,6 +13,7 @@ export default function UserForm({
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [role, setRole] = useState("Student");
+  const [currentlyPracticing, setCurrentlyPracticing] = useState("");
 
   useEffect(() => {
     if (editingUser) {
@@ -21,6 +22,7 @@ export default function UserForm({
       setGrade(editingUser.grade === "-" ? "" : editingUser.grade.toString());
       setMainInstrument(editingUser.main_instrument);
       setRole(editingUser.role || "Student");
+      setCurrentlyPracticing(editingUser.currently_practicing || "");
     }
   }, [editingUser]);
 
@@ -47,6 +49,7 @@ export default function UserForm({
           grade: gradeValue,
           mainInstrument,
           role,
+          currentlyPracticing,
         }),
       });
 
@@ -63,6 +66,7 @@ export default function UserForm({
           setLastName("");
           setGrade("");
           setMainInstrument("");
+          setCurrentlyPracticing("");
           onUserAdded();
         } else {
           onUserEdited();
@@ -174,6 +178,22 @@ export default function UserForm({
             <option value="Alumni">Alumni</option>
             <option value="Teacher">Teacher</option>
           </select>
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-white text-sm font-bold mb-2"
+            htmlFor="currentlyPracticing">
+            Currently Practicing
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
+            id="currentlyPracticing"
+            type="text"
+            placeholder="Enter current practice focus"
+            value={currentlyPracticing}
+            onChange={(e) => setCurrentlyPracticing(e.target.value)}
+            autoComplete="off"
+          />
         </div>
         <div className="flex items-center justify-between">
           <button

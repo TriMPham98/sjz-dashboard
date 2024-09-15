@@ -102,18 +102,23 @@ export default function UserList({ triggerFetch, onEditUser }) {
           <table className="min-w-full bg-black text-white">
             <thead>
               <tr>
-                {["name", "role", "grade", "main_instrument", "score"].map(
-                  (key) => (
-                    <th key={key} className="px-4 py-2 text-left">
-                      {key
-                        .split("_")
-                        .map(
-                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                        )
-                        .join(" ")}
-                    </th>
-                  )
-                )}
+                {[
+                  "name",
+                  "role",
+                  "grade",
+                  "main_instrument",
+                  "score",
+                  "currently_practicing",
+                ].map((key) => (
+                  <th key={key} className="px-4 py-2 text-left">
+                    {key
+                      .split("_")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -133,10 +138,13 @@ export default function UserList({ triggerFetch, onEditUser }) {
                     </td>
                     <td className="px-4 py-2">{user.main_instrument}</td>
                     <td className="px-4 py-2">{user.score}</td>
+                    <td className="px-4 py-2">
+                      {user.currently_practicing || "-"}
+                    </td>
                   </tr>
                   {selectedUserId === user.id && (
                     <tr className="bg-gray-900">
-                      <td colSpan="5" className="px-4 py-2">
+                      <td colSpan="6" className="px-4 py-2">
                         <div className="flex justify-end space-x-2">
                           <button
                             onClick={() => handleEdit(user)}
