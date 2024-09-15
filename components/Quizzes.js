@@ -29,14 +29,14 @@ const Quizzes = () => {
           <h2 className="text-2xl font-bold mb-4 text-white">
             Rhythm Reading Quiz
           </h2>
-          {/* <p className="text-gray-300 mb-4">
+          <p className="text-gray-300 mb-4">
             Test your rhythm reading skills with this interactive quiz. Coming
             soon!
           </p>
           <button className="bg-gray-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
             Start Quiz (Coming Soon)
-          </button> */}
-          <RhythmGame />
+          </button>
+          {/* <RhythmGame /> */}
         </div>
 
         <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
