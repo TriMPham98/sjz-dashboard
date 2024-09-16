@@ -8,20 +8,20 @@ export default function UserForm({
 }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("Student");
   const [grade, setGrade] = useState("");
   const [mainInstrument, setMainInstrument] = useState("");
+  const [currentlyPracticing, setCurrentlyPracticing] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
-  const [role, setRole] = useState("Student");
-  const [currentlyPracticing, setCurrentlyPracticing] = useState("");
 
   useEffect(() => {
     if (editingUser) {
       setFirstName(editingUser.first_name);
       setLastName(editingUser.last_name);
+      setRole(editingUser.role || "Student");
       setGrade(editingUser.grade === "-" ? "" : editingUser.grade.toString());
       setMainInstrument(editingUser.main_instrument);
-      setRole(editingUser.role || "Student");
       setCurrentlyPracticing(editingUser.currently_practicing || "");
     }
   }, [editingUser]);
@@ -46,9 +46,9 @@ export default function UserForm({
           id: editingUser?.id,
           firstName,
           lastName,
+          role,
           grade: gradeValue,
           mainInstrument,
-          role,
           currentlyPracticing,
         }),
       });
@@ -64,6 +64,7 @@ export default function UserForm({
         if (!editingUser) {
           setFirstName("");
           setLastName("");
+          setRole("Student");
           setGrade("");
           setMainInstrument("");
           setCurrentlyPracticing("");
@@ -120,6 +121,23 @@ export default function UserForm({
             autoComplete="off"
           />
         </div>
+        <div className="mb-4">
+          <label
+            className="block text-white text-sm font-bold mb-2"
+            htmlFor="role">
+            Role
+          </label>
+          <select
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800"
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required>
+            <option value="Student">Student</option>
+            <option value="Alumni">Alumni</option>
+            <option value="Teacher">Teacher</option>
+          </select>
+        </div>
         {role === "Student" && (
           <div className="mb-4">
             <label
@@ -160,23 +178,6 @@ export default function UserForm({
             <option value="ukulele">Ukulele</option>
             <option value="violin">Violin</option>
             <option value="vocals">Vocals</option>
-          </select>
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-white text-sm font-bold mb-2"
-            htmlFor="role">
-            Role
-          </label>
-          <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800"
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required>
-            <option value="Student">Student</option>
-            <option value="Alumni">Alumni</option>
-            <option value="Teacher">Teacher</option>
           </select>
         </div>
         <div className="mb-4">
