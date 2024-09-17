@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import GrandStaffQuiz from "./GrandStaffQuiz";
 
 const Resources = () => {
   const [isLoading, setIsLoading] = useState(true);
