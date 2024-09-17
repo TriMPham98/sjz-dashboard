@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import GrandStaffQuiz from "./GrandStaffQuiz";
 
 const Resources = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +55,16 @@ const Resources = () => {
               onLoad={handleIframeLoad}
               title="Bridges Rock Band Enrollment"></iframe>
           </div>
+        </div>
+
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800 col-span-1 md:col-span-2">
+          <h2 className="text-2xl font-bold mb-4 text-white">Drum Machine</h2>
+          <p className="text-gray-300 mb-4">
+            Make your own beats. Coming soon!
+          </p>
+          <button className="bg-gray-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+            (Coming Soon)
+          </button>
         </div>
       </div>
     </div>
