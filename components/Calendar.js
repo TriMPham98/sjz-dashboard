@@ -1,5 +1,9 @@
 import React, { useCallback } from "react";
-import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
+import {
+  Calendar as BigCalendar,
+  momentLocalizer,
+  Views,
+} from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -48,7 +52,7 @@ const customCSS = `
   .rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
     background-color: #c0c0c0;
   }
-  .rbc-month-view, .rbc-time-view, .rbc-agenda-view {
+  .rbc-month-view, .rbc-time-view {
     background-color: #f0f0f0;
   }
   .rbc-off-range-bg {
@@ -99,6 +103,7 @@ export default function Calendar({ events }) {
         startAccessor="start"
         endAccessor="end"
         defaultView="week"
+        views={[Views.MONTH, Views.WEEK, Views.DAY]}
         onReady={handleOnReady}
         scrollToTime={new Date()}
         step={30}
