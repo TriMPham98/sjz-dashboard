@@ -72,11 +72,9 @@ const GrandStaffQuiz = () => {
         octave: octaves[Math.floor(Math.random() * octaves.length)],
       };
     } while (
-      (correctNote.octave === 4 && ["A", "B"].includes(correctNote.note)) ||
-      (correctNote.octave === 3 && correctNote.note < "C") ||
-      (previousNote &&
-        correctNote.note === previousNote.note &&
-        correctNote.octave === previousNote.octave)
+      previousNote &&
+      correctNote.note === previousNote.note &&
+      correctNote.octave === previousNote.octave
     );
 
     setCurrentNote(correctNote);
@@ -101,15 +99,12 @@ const GrandStaffQuiz = () => {
         wrongNote = notes[Math.floor(Math.random() * notes.length)];
         wrongOctave = octaves[Math.floor(Math.random() * octaves.length)];
       } while (
-        (wrongOctave === 4 && ["A", "B"].includes(wrongNote)) ||
-        (wrongOctave === 3 && wrongNote < "C")
+        wrongOctave === correctNote.octave &&
+        wrongNote === correctNote.note
       );
 
       const option = `${wrongNote}${wrongOctave}`;
-      if (
-        option !== `${correctNote.note}${correctNote.octave}` &&
-        !wrongOptions.includes(option)
-      ) {
+      if (!wrongOptions.includes(option)) {
         wrongOptions.push(option);
       }
     }
@@ -171,9 +166,9 @@ const GrandStaffQuiz = () => {
       setFeedback("");
       setPreviousNote(null);
       isFirstRender.current = true;
-      endGameRef.current = false; // Reset endGameRef when starting a new game
+      endGameRef.current = false;
     }
-  }, [isActive, mode, selectedStudent, competitiveTriesLeft]);
+  }, [isActive, mode, selectedStudent]);
 
   const triggerConfetti = useCallback(() => {
     if (quizContainerRef.current) {
@@ -190,7 +185,7 @@ const GrandStaffQuiz = () => {
   }, []);
 
   const endGame = useCallback(async () => {
-    if (endGameRef.current) return; // Prevent multiple calls
+    if (endGameRef.current) return;
     endGameRef.current = true;
 
     setIsActive(false);
@@ -260,7 +255,6 @@ const GrandStaffQuiz = () => {
     setCurrentNote(null);
     setPreviousNote(null);
 
-    // Reset the endGameRef after a short delay
     setTimeout(() => {
       endGameRef.current = false;
     }, 100);
@@ -337,7 +331,7 @@ const GrandStaffQuiz = () => {
       <h2 className="text-xl font-bold text-center">
         Test Your Note Reading Skills 🎹 🎵
       </h2>
-      <p className="text-center text-sm">Range: C3 to G4</p>
+      <p className="text-center text-sm">Range: C3 to B4</p>
 
       <div className="mb-4">
         <label className="block mb-2 text-center">Select Mode:</label>
