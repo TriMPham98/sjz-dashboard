@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import confetti from "canvas-confetti";
 import StaffRenderer from "./StaffRenderer";
+import { useSound } from "./SoundManager";
 
 const chords = [
   { name: "C Major", notes: ["C4", "E4", "G4"] },
@@ -15,76 +17,160 @@ const ChordQuickdrawQuiz = () => {
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [feedback, setFeedback] = useState("");
-  const [gameStarted, setGameStarted] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60);
 
-  useEffect(() => {
-    if (gameStarted) {
-      newChord();
-    }
-  }, [gameStarted]);
+  const { playSound } = useSound();
+  const timerRef = useRef(null);
+  const quizContainerRef = useRef(null);
+  const isFirstRender = useRef(true);
 
-  const newChord = () => {
+  const generateNewChord = useCallback(() => {
     const randomChord = chords[Math.floor(Math.random() * chords.length)];
     setCurrentChord(randomChord);
     setUserAnswer("");
     setFeedback("");
-  };
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setTotalQuestions(totalQuestions + 1);
-
-    if (userAnswer.toLowerCase() === currentChord.name.toLowerCase()) {
-      setScore(score + 1);
-      setFeedback("Correct!");
-    } else {
-      setFeedback(`Incorrect. The correct answer was ${currentChord.name}.`);
+  useEffect(() => {
+    if (isActive && isFirstRender.current) {
+      generateNewChord();
+      isFirstRender.current = false;
+    } else if (!isActive) {
+      setCurrentChord(null);
+      isFirstRender.current = true;
     }
+  }, [isActive, generateNewChord]);
 
-    setTimeout(newChord, 2000);
-  };
+  useEffect(() => {
+    if (isActive && timeLeft > 0) {
+      timerRef.current = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    } else if (timeLeft === 0) {
+      endGame();
+    }
+    return () => clearTimeout(timerRef.current);
+  }, [isActive, timeLeft]);
 
-  const startGame = () => {
-    setGameStarted(true);
-    setScore(0);
-    setTotalQuestions(0);
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!isActive) return;
+
+      setTotalQuestions((prev) => prev + 1);
+      const isCorrect =
+        userAnswer.toLowerCase() === currentChord.name.toLowerCase();
+
+      playSound(isCorrect ? "success" : "error");
+
+      if (isCorrect) {
+        setScore((prev) => prev + 1);
+        setFeedback("Correct!");
+      } else {
+        setFeedback(`Incorrect. The correct answer was ${currentChord.name}.`);
+      }
+
+      setTimeout(generateNewChord, 1000);
+    },
+    [isActive, currentChord, userAnswer, playSound, generateNewChord]
+  );
+
+  const startGame = useCallback(() => {
+    if (isActive) {
+      setIsActive(false);
+      clearTimeout(timerRef.current);
+      setFeedback("Game reset. Press Start to begin a new game.");
+      setCurrentChord(null);
+    } else {
+      setIsActive(true);
+      setTimeLeft(60);
+      setScore(0);
+      setTotalQuestions(0);
+      setFeedback("");
+      isFirstRender.current = true;
+    }
+  }, [isActive]);
+
+  const triggerConfetti = useCallback(() => {
+    if (quizContainerRef.current) {
+      const rect = quizContainerRef.current.getBoundingClientRect();
+      const centerX = (rect.left + rect.right) / 2 / window.innerWidth;
+      const centerY = (rect.top + rect.bottom) / 2 / window.innerHeight;
+
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { x: centerX, y: centerY },
+      });
+    }
+  }, []);
+
+  const endGame = useCallback(() => {
+    setIsActive(false);
+    clearTimeout(timerRef.current);
+
+    const accuracy = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+    setFeedback(
+      `Game over! Your final score is ${score}/${totalQuestions} (${accuracy.toFixed(
+        2
+      )}% accuracy).`
+    );
+    playSound("gameOver");
+    triggerConfetti();
+
+    setCurrentChord(null);
+  }, [score, totalQuestions, playSound, triggerConfetti]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg">
-      {!gameStarted ? (
+    <div
+      ref={quizContainerRef}
+      className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-800">
+      <h2 className="text-xl font-bold text-center">
+        Chord Quickdraw Quiz 🎹 🎵
+      </h2>
+
+      {currentChord && <StaffRenderer notes={currentChord.notes} />}
+
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <input
+          type="text"
+          value={userAnswer}
+          onChange={(e) => setUserAnswer(e.target.value)}
+          placeholder="Enter chord name"
+          className="w-full p-2 border rounded"
+          disabled={!isActive}
+        />
+        <button
+          type="submit"
+          disabled={!isActive}
+          className={`w-full px-4 py-2 ${
+            isActive
+              ? "bg-blue-500 text-white hover:bg-blue-600"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          } rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}>
+          Submit
+        </button>
+      </form>
+
+      <p className="text-center font-semibold">{feedback}</p>
+      <div className="text-center">
+        <p className="font-semibold">
+          Score: {score}/{totalQuestions}
+        </p>
+      </div>
+      <div className="text-center">
+        <p className="font-bold text-xl">{formatTime(timeLeft)}</p>
         <button
           onClick={startGame}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Start Quiz
+          className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+          {isActive ? "Reset" : "Start"}
         </button>
-      ) : (
-        <>
-          <div className="mb-4">
-            {currentChord && <StaffRenderer notes={currentChord.notes} />}
-          </div>
-          <form onSubmit={handleSubmit} className="mb-4">
-            <input
-              type="text"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              placeholder="Enter chord name"
-              className="bg-gray-700 text-white p-2 rounded w-full"
-            />
-            <button
-              type="submit"
-              className="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">
-              Submit
-            </button>
-          </form>
-          <div className="text-white">
-            <p>
-              Score: {score} / {totalQuestions}
-            </p>
-            <p className="mt-2">{feedback}</p>
-          </div>
-        </>
-      )}
+      </div>
     </div>
   );
 };
