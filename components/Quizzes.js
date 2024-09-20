@@ -1,6 +1,7 @@
 import React from "react";
 import GrandStaffQuiz from "./GrandStaffQuiz";
 import RhythmGame from "./RhythmGame";
+import ChordQuickdrawQuiz from "./ChordQuickdraw";
 
 const Quizzes = () => {
   return (
@@ -17,12 +18,13 @@ const Quizzes = () => {
           <h2 className="text-2xl font-bold mb-4 text-white">
             Chord Quickdraw Quiz
           </h2>
-          <p className="text-gray-300 mb-4">
+          {/* <p className="text-gray-300 mb-4">
             Practice your chord quickdraw speed. Coming soon!
           </p>
           <button className="bg-gray-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
             Start Quiz (Coming Soon)
-          </button>
+          </button> */}
+          <ChordQuickdrawQuiz />
         </div>
 
         <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
