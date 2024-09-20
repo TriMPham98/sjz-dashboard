@@ -82,7 +82,7 @@ const chords = [
 
 const ChordQuickdrawQuiz = () => {
   const [currentChord, setCurrentChord] = useState(null);
-  const [userAnswer, setUserAnswer] = useState("");
+  const [options, setOptions] = useState([]);
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [feedback, setFeedback] = useState("");
@@ -97,7 +97,20 @@ const ChordQuickdrawQuiz = () => {
   const generateNewChord = useCallback(() => {
     const randomChord = chords[Math.floor(Math.random() * chords.length)];
     setCurrentChord(randomChord);
-    setUserAnswer("");
+
+    // Generate 3 wrong options
+    const wrongOptions = chords
+      .filter((chord) => chord.name !== randomChord.name)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 3)
+      .map((chord) => chord.name);
+
+    // Add correct answer and shuffle
+    const allOptions = [...wrongOptions, randomChord.name].sort(
+      () => 0.5 - Math.random()
+    );
+    setOptions(allOptions);
+
     setFeedback("");
   }, []);
 
@@ -120,14 +133,12 @@ const ChordQuickdrawQuiz = () => {
     return () => clearTimeout(timerRef.current);
   }, [isActive, timeLeft]);
 
-  const handleSubmit = useCallback(
-    (e) => {
-      e.preventDefault();
+  const handleAnswer = useCallback(
+    (selectedAnswer) => {
       if (!isActive) return;
 
       setTotalQuestions((prev) => prev + 1);
-      const isCorrect =
-        userAnswer.toLowerCase() === currentChord.name.toLowerCase();
+      const isCorrect = selectedAnswer === currentChord.name;
 
       playSound(isCorrect ? "success" : "error");
 
@@ -140,7 +151,7 @@ const ChordQuickdrawQuiz = () => {
 
       setTimeout(generateNewChord, 1000);
     },
-    [isActive, currentChord, userAnswer, playSound, generateNewChord]
+    [isActive, currentChord, playSound, generateNewChord]
   );
 
   const startGame = useCallback(() => {
@@ -205,26 +216,21 @@ const ChordQuickdrawQuiz = () => {
 
       {currentChord && <StaffRenderer notes={currentChord.notes} />}
 
-      <form onSubmit={handleSubmit} className="space-y-2">
-        <input
-          type="text"
-          value={userAnswer}
-          onChange={(e) => setUserAnswer(e.target.value)}
-          placeholder="Enter chord name"
-          className="w-full p-2 border rounded"
-          disabled={!isActive}
-        />
-        <button
-          type="submit"
-          disabled={!isActive}
-          className={`w-full px-4 py-2 ${
-            isActive
-              ? "bg-blue-500 text-white hover:bg-blue-600"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          } rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}>
-          Submit
-        </button>
-      </form>
+      <div className="grid grid-cols-2 gap-2">
+        {options.map((option, index) => (
+          <button
+            key={index}
+            onClick={() => handleAnswer(option)}
+            disabled={!isActive}
+            className={`px-4 py-2 ${
+              isActive
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            } rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}>
+            {option}
+          </button>
+        ))}
+      </div>
 
       <p className="text-center font-semibold">{feedback}</p>
       <div className="text-center">
