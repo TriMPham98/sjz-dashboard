@@ -1,7 +1,76 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import confetti from "canvas-confetti";
-import StaffRenderer from "./StaffRenderer";
 import { useSound } from "./SoundManager";
+import Vex from "vexflow";
+
+const VF = Vex.Flow;
+
+const StaffRenderer = ({ notes }) => {
+  const staffRef = useRef(null);
+
+  useEffect(() => {
+    drawStaff();
+  }, [notes]);
+
+  const drawStaff = () => {
+    if (!staffRef.current) return;
+
+    staffRef.current.innerHTML = "";
+
+    const renderer = new VF.Renderer(
+      staffRef.current,
+      VF.Renderer.Backends.SVG
+    );
+
+    const width = 475;
+    const height = 200;
+    renderer.resize(width, height);
+
+    const context = renderer.getContext();
+    context.setFillStyle("#000000");
+    context.setStrokeStyle("#000000");
+
+    const staveWidth = width - 20;
+    const trebleStaff = new VF.Stave(10, 30, staveWidth);
+    trebleStaff.addClef("treble").setContext(context).draw();
+
+    const bassStaff = new VF.Stave(10, 110, staveWidth);
+    bassStaff.addClef("bass").setContext(context).draw();
+
+    if (notes && notes.length > 0) {
+      const chordNotes = notes.map((noteStr) => {
+        const [note, octave] = noteStr.split(/(\d+)/);
+        return { note, octave: parseInt(octave) };
+      });
+
+      const trebleNotes = chordNotes.filter((n) => n.octave >= 4);
+      const bassNotes = chordNotes.filter((n) => n.octave < 4);
+
+      const drawNotesOnStaff = (staffNotes, staff, clef) => {
+        if (staffNotes.length > 0) {
+          const staveNote = new VF.StaveNote({
+            clef: clef,
+            keys: staffNotes.map((n) => `${n.note.toLowerCase()}/${n.octave}`),
+            duration: "w",
+          });
+
+          const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
+          voice.addTickables([staveNote]);
+
+          new VF.Formatter()
+            .joinVoices([voice])
+            .format([voice], staveWidth - 50);
+          voice.draw(context, staff);
+        }
+      };
+
+      drawNotesOnStaff(trebleNotes, trebleStaff, "treble");
+      drawNotesOnStaff(bassNotes, bassStaff, "bass");
+    }
+  };
+
+  return <div ref={staffRef} className="w-full h-48 bg-gray-100"></div>;
+};
 
 const chords = [
   { name: "C Major", notes: ["C4", "E4", "G4"] },
