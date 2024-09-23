@@ -8,7 +8,7 @@ export default function Dashboard() {
   return (
     <div className="bg-black text-white p-4">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-4 text-white">Program Schedule</h2>
+        {/* <h2 className="text-2xl font-bold mb-4 text-white">Program Schedule</h2> */}
         <div
           className="w-full"
           style={{
