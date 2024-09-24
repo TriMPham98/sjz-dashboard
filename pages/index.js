@@ -9,47 +9,58 @@ import Quizzes from "../components/Quizzes";
 import Footer from "../components/Footer";
 import PasswordPopup from "../components/PasswordPopup";
 
+// Main component for the home page of the San Jose Jazz Progressions application
 export default function Home() {
-  const [triggerFetch, setTriggerFetch] = useState(0);
-  const [editingUser, setEditingUser] = useState(null);
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [highlightStyle, setHighlightStyle] = useState({});
-  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
-  const [triggerInputFocus, setTriggerInputFocus] = useState(false);
+  // State variables
+  const [triggerFetch, setTriggerFetch] = useState(0); // Used to trigger re-fetching of user data
+  const [editingUser, setEditingUser] = useState(null); // Stores the user being edited
+  const [activeTab, setActiveTab] = useState("dashboard"); // Tracks the currently active tab
+  const [showAddForm, setShowAddForm] = useState(false); // Controls visibility of the add/edit user form
+  const [highlightStyle, setHighlightStyle] = useState({}); // Styles for highlighting the active tab
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false); // Controls visibility of the password popup
+  const [triggerInputFocus, setTriggerInputFocus] = useState(false); // Used to trigger focus on input fields
+
+  // Ref to store references to tab elements for positioning the highlight
   const tabRefs = useRef({});
 
+  // Handler for when a user is added
   const handleUserAdded = () => {
-    setTriggerFetch((prev) => prev + 1);
+    setTriggerFetch((prev) => prev + 1); // Trigger a re-fetch of user data
     setShowAddForm(false);
     setTriggerInputFocus(false);
   };
 
+  // Handler for editing a user
   const handleEditUser = (user) => {
     setEditingUser(user);
     setShowAddForm(true);
     setTriggerInputFocus(true);
   };
 
+  // Handler for when a user is edited
   const handleUserEdited = () => {
-    setTriggerFetch((prev) => prev + 1);
+    setTriggerFetch((prev) => prev + 1); // Trigger a re-fetch of user data
     setEditingUser(null);
     setShowAddForm(false);
     setTriggerInputFocus(false);
   };
 
+  // Handler for opening the dashboard
   const handleOpenDashboard = () => {
     setActiveTab("dashboard");
   };
 
+  // Handler for changing tabs
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
+  // Handler for clicking the "Add Student" button
   const handleAddStudentClick = () => {
     setShowPasswordPopup(true);
   };
 
+  // Handler for submitting the password
   const handlePasswordSubmit = (password) => {
     if (password === "onDeals") {
       setShowPasswordPopup(false);
@@ -60,6 +71,7 @@ export default function Home() {
     }
   };
 
+  // Effect to update the highlight style when the active tab changes
   useEffect(() => {
     const currentTabElement = tabRefs.current[activeTab];
     if (currentTabElement) {
@@ -71,6 +83,7 @@ export default function Home() {
     }
   }, [activeTab]);
 
+  // Array of available tabs
   const tabs = ["dashboard", "quizzes", "resources", "members"];
 
   return (
@@ -83,8 +96,9 @@ export default function Home() {
       <Header onOpenDashboard={handleOpenDashboard} />
 
       <div className="flex flex-1">
-        {/* Sidebar */}
+        {/* Sidebar navigation */}
         <div className="w-64 bg-black min-h-screen p-4 border-r border-gray-800 relative">
+          {/* Highlight for active tab */}
           <div
             className="absolute left-0 w-full bg-white rounded transition-all duration-300 ease-in-out"
             style={{
@@ -94,6 +108,7 @@ export default function Home() {
               zIndex: 0,
             }}
           />
+          {/* Navigation buttons */}
           <nav className="relative z-10">
             {tabs.map((tab) => (
               <button
@@ -111,8 +126,9 @@ export default function Home() {
           </nav>
         </div>
 
-        {/* Main content */}
+        {/* Main content area */}
         <main className="flex-1 p-8 bg-black">
+          {/* Render different components based on the active tab */}
           {activeTab === "dashboard" && (
             <>
               <h1 className="text-4xl font-bold mb-8 text-gray-100">
@@ -146,6 +162,7 @@ export default function Home() {
                   </button>
                 )}
               </div>
+              {/* Render UserForm for adding/editing or UserList for displaying members */}
               {showAddForm ? (
                 <UserForm
                   onUserAdded={handleUserAdded}
@@ -171,6 +188,7 @@ export default function Home() {
 
       <Footer />
 
+      {/* Render password popup when adding a new member */}
       {showPasswordPopup && (
         <PasswordPopup
           onSubmit={handlePasswordSubmit}
