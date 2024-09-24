@@ -4,10 +4,12 @@ import PasswordPopup from "./PasswordPopup";
 import StaffRenderer from "./StaffRenderer";
 import { useSound } from "./SoundManager";
 
+// Define the range of notes and octaves used in the quiz
 const notes = ["C", "D", "E", "F", "G", "A", "B"];
 const octaves = [3, 4];
 
 const GrandStaffQuiz = () => {
+  // State variables for managing the quiz
   const [currentNote, setCurrentNote] = useState(null);
   const [previousNote, setPreviousNote] = useState(null);
   const [options, setOptions] = useState([]);
@@ -23,12 +25,16 @@ const GrandStaffQuiz = () => {
   const [mode, setMode] = useState("practice");
   const [competitiveTriesLeft, setCompetitiveTriesLeft] = useState(3);
 
+  // Custom hook for playing sounds
   const { playSound, playNote } = useSound();
+
+  // Refs for managing timers and game state
   const timerRef = useRef(null);
   const quizContainerRef = useRef(null);
   const isFirstRender = useRef(true);
   const endGameRef = useRef(false);
 
+  // Fetch students data from the API
   const fetchStudents = useCallback(async () => {
     try {
       const response = await fetch("/api/checkUsers");
@@ -40,10 +46,12 @@ const GrandStaffQuiz = () => {
     }
   }, []);
 
+  // Fetch students on component mount
   useEffect(() => {
     fetchStudents();
   }, [fetchStudents]);
 
+  // Handle game start and reset
   useEffect(() => {
     if (isActive && isFirstRender.current) {
       generateNewQuestion();
@@ -55,6 +63,7 @@ const GrandStaffQuiz = () => {
     }
   }, [isActive]);
 
+  // Manage game timer
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       timerRef.current = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -64,8 +73,10 @@ const GrandStaffQuiz = () => {
     return () => clearTimeout(timerRef.current);
   }, [isActive, timeLeft]);
 
+  // Generate a new question for the quiz
   const generateNewQuestion = useCallback(() => {
     let correctNote;
+    // Ensure the new note is different from the previous one
     do {
       correctNote = {
         note: notes[Math.floor(Math.random() * notes.length)],
@@ -80,8 +91,10 @@ const GrandStaffQuiz = () => {
     setCurrentNote(correctNote);
     setPreviousNote(correctNote);
 
+    // Play the sound of the current note
     playNote(correctNote.note, correctNote.octave);
 
+    // Generate options for the quiz, including the correct answer
     const newOptions = [
       `${correctNote.note}${correctNote.octave}`,
       ...generateWrongOptions(correctNote),
@@ -91,6 +104,7 @@ const GrandStaffQuiz = () => {
     setFeedback("");
   }, [previousNote, playNote]);
 
+  // Generate incorrect options for the quiz
   const generateWrongOptions = (correctNote) => {
     const wrongOptions = [];
     while (wrongOptions.length < 3) {
@@ -111,6 +125,7 @@ const GrandStaffQuiz = () => {
     return wrongOptions;
   };
 
+  // Shuffle an array using Fisher-Yates algorithm
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -118,6 +133,7 @@ const GrandStaffQuiz = () => {
     }
   };
 
+  // Handle user's guess
   const handleGuess = useCallback(
     (guess) => {
       if (!isActive) return;
@@ -135,17 +151,20 @@ const GrandStaffQuiz = () => {
         setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
       }
 
+      // Generate a new question after a short delay
       setTimeout(generateNewQuestion, 500);
     },
     [isActive, currentNote, playSound, generateNewQuestion]
   );
 
+  // Calculate and format the score display
   const getScoreDisplay = useCallback(() => {
     if (totalGuesses === 0) return "0/0 (0%)";
     const ratio = (score / totalGuesses).toFixed(2);
     return `${score}/${totalGuesses} (${(ratio * 100).toFixed(0)}%)`;
   }, [score, totalGuesses]);
 
+  // Start or reset the game
   const startGame = useCallback(() => {
     if (isActive) {
       setIsActive(false);
@@ -170,6 +189,7 @@ const GrandStaffQuiz = () => {
     }
   }, [isActive, mode, selectedStudent]);
 
+  // Trigger confetti animation
   const triggerConfetti = useCallback(() => {
     if (quizContainerRef.current) {
       const rect = quizContainerRef.current.getBoundingClientRect();
@@ -184,6 +204,7 @@ const GrandStaffQuiz = () => {
     }
   }, []);
 
+  // End the game and handle score updates
   const endGame = useCallback(async () => {
     if (endGameRef.current) return;
     endGameRef.current = true;
@@ -199,6 +220,7 @@ const GrandStaffQuiz = () => {
     } else if (mode === "scored" && selectedStudent) {
       if (accuracy >= 90 && score > selectedStudent.score) {
         try {
+          // Update the student's score in the database
           const response = await fetch("/api/updateScore", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -214,6 +236,7 @@ const GrandStaffQuiz = () => {
               2
             )}% accuracy. New high score: ${score}`
           );
+          // Update the local students list with the new score
           setStudents((prevStudents) =>
             prevStudents.map((student) =>
               student.id === selectedStudent.id
@@ -242,6 +265,7 @@ const GrandStaffQuiz = () => {
         );
       }
 
+      // Manage competitive tries
       setCompetitiveTriesLeft((prev) => {
         const newTriesLeft = prev - 1;
         if (newTriesLeft === 0) {
@@ -255,6 +279,7 @@ const GrandStaffQuiz = () => {
     setCurrentNote(null);
     setPreviousNote(null);
 
+    // Reset endGameRef after a short delay to prevent multiple triggers
     setTimeout(() => {
       endGameRef.current = false;
     }, 100);
@@ -268,12 +293,14 @@ const GrandStaffQuiz = () => {
     playSound,
   ]);
 
+  // Format time display
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  // Handle student selection change
   const handleStudentChange = useCallback(
     (e) => {
       const newStudentId = parseInt(e.target.value);
@@ -285,6 +312,7 @@ const GrandStaffQuiz = () => {
     [selectedStudent, students]
   );
 
+  // Handle password submission for student selection
   const handlePasswordSubmit = useCallback(
     (password) => {
       if (password === "onDeals") {
@@ -300,11 +328,13 @@ const GrandStaffQuiz = () => {
     [tempStudentSelection]
   );
 
+  // Handle password popup cancellation
   const handlePasswordCancel = useCallback(() => {
     setShowPasswordPopup(false);
     setTempStudentSelection(null);
   }, []);
 
+  // Handle game mode change
   const handleModeChange = useCallback(
     (newMode) => {
       if (isActive) {
@@ -324,6 +354,7 @@ const GrandStaffQuiz = () => {
     [isActive]
   );
 
+  // Render the component
   return (
     <div
       ref={quizContainerRef}
@@ -333,6 +364,7 @@ const GrandStaffQuiz = () => {
       </h2>
       <p className="text-center text-sm">Range: C3 to B4</p>
 
+      {/* Mode selection buttons */}
       <div className="mb-4">
         <label className="block mb-2 text-center">Select Mode:</label>
         <div className="flex justify-center space-x-4">
@@ -357,6 +389,7 @@ const GrandStaffQuiz = () => {
         </div>
       </div>
 
+      {/* Student selection dropdown for scored mode */}
       {mode === "scored" && (
         <div className="mb-4">
           <select
@@ -380,7 +413,10 @@ const GrandStaffQuiz = () => {
         </div>
       )}
 
+      {/* Render the musical staff */}
       <StaffRenderer currentNote={currentNote} />
+
+      {/* Answer options */}
       <div className="grid grid-cols-2 gap-2">
         {options.map((option, index) => (
           <button
@@ -398,10 +434,16 @@ const GrandStaffQuiz = () => {
           </button>
         ))}
       </div>
+
+      {/* Feedback display */}
       <p className="text-center font-semibold">{feedback}</p>
+
+      {/* Score display */}
       <div className="text-center">
         <p className="font-semibold">Score: {getScoreDisplay()}</p>
       </div>
+
+      {/* Timer and start/reset button */}
       <div className="text-center">
         <p className="font-bold text-xl">{formatTime(timeLeft)}</p>
         <button
@@ -411,6 +453,7 @@ const GrandStaffQuiz = () => {
         </button>
       </div>
 
+      {/* Password popup for student selection */}
       {showPasswordPopup && (
         <PasswordPopup
           onSubmit={handlePasswordSubmit}
