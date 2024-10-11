@@ -8,11 +8,7 @@ const VF = Vex.Flow;
 const StaffRenderer = ({ notes }) => {
   const staffRef = useRef(null);
 
-  useEffect(() => {
-    drawStaff();
-  }, [notes]);
-
-  const drawStaff = () => {
+  const drawStaff = useCallback(() => {
     if (!staffRef.current) return;
 
     staffRef.current.innerHTML = "";
@@ -67,7 +63,11 @@ const StaffRenderer = ({ notes }) => {
       drawNotesOnStaff(trebleNotes, trebleStaff, "treble");
       drawNotesOnStaff(bassNotes, bassStaff, "bass");
     }
-  };
+  }, [notes]);
+
+  useEffect(() => {
+    drawStaff();
+  }, [drawStaff]);
 
   return <div ref={staffRef} className="w-full h-48 bg-gray-100"></div>;
 };
@@ -98,14 +98,12 @@ const ChordQuickdrawQuiz = () => {
     const randomChord = chords[Math.floor(Math.random() * chords.length)];
     setCurrentChord(randomChord);
 
-    // Generate 3 wrong options
     const wrongOptions = chords
       .filter((chord) => chord.name !== randomChord.name)
       .sort(() => 0.5 - Math.random())
       .slice(0, 3)
       .map((chord) => chord.name);
 
-    // Add correct answer and shuffle
     const allOptions = [...wrongOptions, randomChord.name].sort(
       () => 0.5 - Math.random()
     );
@@ -124,6 +122,22 @@ const ChordQuickdrawQuiz = () => {
     }
   }, [isActive, generateNewChord]);
 
+  const endGame = useCallback(() => {
+    setIsActive(false);
+    clearTimeout(timerRef.current);
+
+    const accuracy = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+    setFeedback(
+      `Game over! Your final score is ${score}/${totalQuestions} (${accuracy.toFixed(
+        2
+      )}% accuracy).`
+    );
+    playSound("gameOver");
+    triggerConfetti();
+
+    setCurrentChord(null);
+  }, [score, totalQuestions, playSound]);
+
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       timerRef.current = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -131,7 +145,7 @@ const ChordQuickdrawQuiz = () => {
       endGame();
     }
     return () => clearTimeout(timerRef.current);
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, endGame]);
 
   const handleAnswer = useCallback(
     (selectedAnswer) => {
@@ -183,22 +197,6 @@ const ChordQuickdrawQuiz = () => {
       });
     }
   }, []);
-
-  const endGame = useCallback(() => {
-    setIsActive(false);
-    clearTimeout(timerRef.current);
-
-    const accuracy = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
-    setFeedback(
-      `Game over! Your final score is ${score}/${totalQuestions} (${accuracy.toFixed(
-        2
-      )}% accuracy).`
-    );
-    playSound("gameOver");
-    triggerConfetti();
-
-    setCurrentChord(null);
-  }, [score, totalQuestions, playSound, triggerConfetti]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
