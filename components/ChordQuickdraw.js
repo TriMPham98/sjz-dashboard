@@ -67,7 +67,7 @@ const StaffRenderer = ({ notes }) => {
 
   useEffect(() => {
     drawStaff();
-  }, [drawStaff]);
+  }, [drawStaff, notes]);
 
   return <div ref={staffRef} className="w-full h-48 bg-gray-100"></div>;
 };
@@ -112,15 +112,19 @@ const ChordQuickdrawQuiz = () => {
     setFeedback("");
   }, []);
 
-  useEffect(() => {
-    if (isActive && isFirstRender.current) {
-      generateNewChord();
-      isFirstRender.current = false;
-    } else if (!isActive) {
-      setCurrentChord(null);
-      isFirstRender.current = true;
+  const triggerConfetti = useCallback(() => {
+    if (quizContainerRef.current) {
+      const rect = quizContainerRef.current.getBoundingClientRect();
+      const centerX = (rect.left + rect.right) / 2 / window.innerWidth;
+      const centerY = (rect.top + rect.bottom) / 2 / window.innerHeight;
+
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { x: centerX, y: centerY },
+      });
     }
-  }, [isActive, generateNewChord]);
+  }, [quizContainerRef]);
 
   const endGame = useCallback(() => {
     setIsActive(false);
@@ -136,7 +140,17 @@ const ChordQuickdrawQuiz = () => {
     triggerConfetti();
 
     setCurrentChord(null);
-  }, [score, totalQuestions, playSound]);
+  }, [score, totalQuestions, playSound, triggerConfetti]);
+
+  useEffect(() => {
+    if (isActive && isFirstRender.current) {
+      generateNewChord();
+      isFirstRender.current = false;
+    } else if (!isActive) {
+      setCurrentChord(null);
+      isFirstRender.current = true;
+    }
+  }, [isActive, generateNewChord]);
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
@@ -183,20 +197,6 @@ const ChordQuickdrawQuiz = () => {
       isFirstRender.current = true;
     }
   }, [isActive]);
-
-  const triggerConfetti = useCallback(() => {
-    if (quizContainerRef.current) {
-      const rect = quizContainerRef.current.getBoundingClientRect();
-      const centerX = (rect.left + rect.right) / 2 / window.innerWidth;
-      const centerY = (rect.top + rect.bottom) / 2 / window.innerHeight;
-
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { x: centerX, y: centerY },
-      });
-    }
-  }, []);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
