@@ -1,5 +1,7 @@
+// pages/resources.js
 import React, { useState } from "react";
 import GrandStaffQuiz from "./GrandStaffQuiz";
+import MusicBingo from "../components/MusicBingo";
 
 const Resources = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +59,15 @@ const Resources = () => {
           </div>
         </div>
 
-        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800 col-span-1 md:col-span-2">
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
+          <h2 className="text-2xl font-bold mb-4 text-white">Music Bingo</h2>
+          <p className="text-gray-300 mb-4">
+            Create your own music bingo cards for practice or fun!
+          </p>
+          <MusicBingo />
+        </div>
+
+        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
           <h2 className="text-2xl font-bold mb-4 text-white">Drum Machine</h2>
           <p className="text-gray-300 mb-4">
             Make your own beats. Coming soon!
