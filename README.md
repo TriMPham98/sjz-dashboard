@@ -1,8 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎮 SJZ Dashboard
 
-## Getting Started
+A gamified music education dashboard that makes learning fun and engaging. This interactive platform combines music education with game-like elements to create an immersive learning experience.
 
-First, run the development server:
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://sjz-dashboard.vercel.app)
+
+## 🎯 Features
+
+- **Interactive Learning Interface**: Engage with music lessons through an intuitive, game-like dashboard
+- **Progress Tracking**: Monitor your musical development with detailed progress metrics
+- **Real-time Practice Tools**: Built-in tools for practicing and improving your musical skills
+- **Gamification Elements**: Earn rewards and track achievements as you learn
+- **Customizable Experience**: Adapt the learning path to your skill level and goals
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 16.x or later
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/TriMPham98/sjz-dashboard.git
+cd sjz-dashboard
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Run the development server:
 
 ```bash
 npm run dev
@@ -14,27 +48,55 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Audio Processing**: [Tone.js](https://tonejs.github.io/)
+- **Deployment**: [Vercel](https://vercel.com)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+sjz-dashboard/
+├── components/     # Reusable UI components
+├── data/          # Static data and configurations
+├── lib/           # Utility functions and helpers
+├── pages/         # Application routes and API endpoints
+├── public/        # Static assets
+└── styles/        # Global styles and Tailwind config
+```
 
-## Learn More
+## 🔄 API Routes
 
-To learn more about Next.js, take a look at the following resources:
+- API routes are accessible at `http://localhost:3000/api/*`
+- The `pages/api` directory is mapped to `/api/*`
+- API endpoints can be edited in their respective files under `pages/api/`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📚 Learning Resources
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [Next.js GitHub Repository](https://github.com/vercel/next.js)
 
-## Deploy on Vercel
+## 🚀 Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is optimized for deployment on Vercel, the platform created by the makers of Next.js. For detailed deployment instructions, visit the [Next.js deployment documentation](https://nextjs.org/docs/deployment).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🎵 About
+
+SJZ Dashboard is designed to revolutionize music education by making it more engaging and accessible through gamification. Whether you're a beginner or an advanced musician, our platform provides the tools and motivation to enhance your musical journey.
+
+---
+
+Built with ❤️ by [TriMPham98](https://github.com/TriMPham98)
