@@ -10,11 +10,11 @@ const Resources = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-4xl font-bold mb-8 text-white">Resources</h1>
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">Resources</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800 flex flex-col">
-          <h2 className="text-2xl font-bold mb-4 text-white">
+        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-200 flex flex-col">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Songs We&rsquo;re Learning
           </h2>
           <div className="flex-grow">
@@ -30,15 +30,15 @@ const Resources = () => {
           </div>
         </div>
 
-        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
+        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-200">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-2xl font-bold text-gray-800">
               Bridges Rock Band Enrollment Form
             </h2>
             <a
               href="/BridgesRockBandEnrollment.pdf"
               download
-              className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
               Download
             </a>
           </div>
@@ -57,12 +57,14 @@ const Resources = () => {
           </div>
         </div>
 
-        <div className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
-          <h2 className="text-2xl font-bold mb-4 text-white">Drum Machine</h2>
-          <p className="text-gray-300 mb-4">
+        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-200">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            Drum Machine
+          </h2>
+          <p className="text-gray-600 mb-4">
             Make your own beats. Coming soon!
           </p>
-          <button className="bg-gray-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+          <button className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
             (Coming Soon)
           </button>
         </div>
