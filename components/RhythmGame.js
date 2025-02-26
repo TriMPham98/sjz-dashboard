@@ -192,7 +192,7 @@ const RhythmGame = () => {
       endGame();
     }
     return () => clearTimeout(timerRef.current);
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, endGame]);
 
   const startGame = useCallback(() => {
     if (isActive) {

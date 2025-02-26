@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import Vex from "vexflow";
 
 const VF = Vex.Flow;
@@ -6,11 +6,7 @@ const VF = Vex.Flow;
 const StaffRenderer = ({ currentNote }) => {
   const staffRef = useRef(null);
 
-  useEffect(() => {
-    drawStaff();
-  }, [currentNote]);
-
-  const drawStaff = () => {
+  const drawStaff = useCallback(() => {
     if (!staffRef.current) return;
 
     staffRef.current.innerHTML = "";
@@ -63,7 +59,11 @@ const StaffRenderer = ({ currentNote }) => {
       new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 50);
       voice.draw(context, staveToUse);
     }
-  };
+  }, [currentNote, staffRef]);
+
+  useEffect(() => {
+    drawStaff();
+  }, [drawStaff]);
 
   return <div ref={staffRef} className="w-full h-48 bg-gray-100"></div>;
 };

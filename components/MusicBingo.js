@@ -1,5 +1,5 @@
 // components/MusicBingo.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 const MusicBingo = () => {
   const [squares, setSquares] = useState(Array(25).fill(""));
@@ -7,7 +7,7 @@ const MusicBingo = () => {
   const [isEditing, setIsEditing] = useState(true);
   const [hasWon, setHasWon] = useState(false);
 
-  const checkWin = () => {
+  const checkWin = useCallback(() => {
     // Check rows
     for (let i = 0; i < 25; i += 5) {
       if (selected.slice(i, i + 5).every((val) => val)) return true;
@@ -20,7 +20,7 @@ const MusicBingo = () => {
     if ([0, 6, 12, 18, 24].every((i) => selected[i])) return true;
     if ([4, 8, 12, 16, 20].every((i) => selected[i])) return true;
     return false;
-  };
+  }, [selected]);
 
   const toggleSelected = (index) => {
     if (!isEditing) {
@@ -109,7 +109,7 @@ const MusicBingo = () => {
       {hasWon && (
         <div className="mb-4 bg-green-900 text-white p-4 rounded">
           <h3 className="font-bold">Winner!</h3>
-          <p>Congratulations! You've got BINGO!</p>
+          <p>Congratulations! You&apos;ve got BINGO!</p>
         </div>
       )}
 
