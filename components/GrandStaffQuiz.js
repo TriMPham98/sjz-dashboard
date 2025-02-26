@@ -61,7 +61,7 @@ const GrandStaffQuiz = () => {
       setPreviousNote(null);
       isFirstRender.current = true;
     }
-  }, [isActive]);
+  }, [isActive, generateNewQuestion]);
 
   // Manage game timer
   useEffect(() => {
@@ -71,7 +71,7 @@ const GrandStaffQuiz = () => {
       endGame();
     }
     return () => clearTimeout(timerRef.current);
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, endGame]);
 
   // Generate a new question for the quiz
   const generateNewQuestion = useCallback(() => {

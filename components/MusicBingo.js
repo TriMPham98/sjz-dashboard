@@ -55,7 +55,7 @@ const MusicBingo = () => {
     if (!isEditing && checkWin()) {
       setHasWon(true);
     }
-  }, [selected, isEditing]);
+  }, [selected, isEditing, checkWin]);
 
   const renderSquare = (index) => {
     const isCenter = index === 12;
