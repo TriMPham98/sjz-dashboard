@@ -34,44 +34,34 @@ const GrandStaffQuiz = () => {
   const isFirstRender = useRef(true);
   const endGameRef = useRef(false);
 
-  // Fetch students data from the API
-  const fetchStudents = useCallback(async () => {
-    try {
-      const response = await fetch("/api/checkUsers");
-      if (!response.ok) throw new Error("Failed to fetch students");
-      const data = await response.json();
-      setStudents(data.sort((a, b) => b.score - a.score));
-    } catch (error) {
-      console.error("Error fetching students:", error);
+  // Shuffle an array using Fisher-Yates algorithm
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
-  }, []);
+  };
 
-  // Fetch students on component mount
-  useEffect(() => {
-    fetchStudents();
-  }, [fetchStudents]);
+  // Generate incorrect options for the quiz
+  const generateWrongOptions = (correctNote) => {
+    const wrongOptions = [];
+    while (wrongOptions.length < 3) {
+      let wrongNote, wrongOctave;
+      do {
+        wrongNote = notes[Math.floor(Math.random() * notes.length)];
+        wrongOctave = octaves[Math.floor(Math.random() * octaves.length)];
+      } while (
+        wrongOctave === correctNote.octave &&
+        wrongNote === correctNote.note
+      );
 
-  // Handle game start and reset
-  useEffect(() => {
-    if (isActive && isFirstRender.current) {
-      generateNewQuestion();
-      isFirstRender.current = false;
-    } else if (!isActive) {
-      setCurrentNote(null);
-      setPreviousNote(null);
-      isFirstRender.current = true;
+      const option = `${wrongNote}${wrongOctave}`;
+      if (!wrongOptions.includes(option)) {
+        wrongOptions.push(option);
+      }
     }
-  }, [isActive, generateNewQuestion]);
-
-  // Manage game timer
-  useEffect(() => {
-    if (isActive && timeLeft > 0) {
-      timerRef.current = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft === 0) {
-      endGame();
-    }
-    return () => clearTimeout(timerRef.current);
-  }, [isActive, timeLeft, endGame]);
+    return wrongOptions;
+  };
 
   // Generate a new question for the quiz
   const generateNewQuestion = useCallback(() => {
@@ -104,90 +94,12 @@ const GrandStaffQuiz = () => {
     setFeedback("");
   }, [previousNote, playNote]);
 
-  // Generate incorrect options for the quiz
-  const generateWrongOptions = (correctNote) => {
-    const wrongOptions = [];
-    while (wrongOptions.length < 3) {
-      let wrongNote, wrongOctave;
-      do {
-        wrongNote = notes[Math.floor(Math.random() * notes.length)];
-        wrongOctave = octaves[Math.floor(Math.random() * octaves.length)];
-      } while (
-        wrongOctave === correctNote.octave &&
-        wrongNote === correctNote.note
-      );
-
-      const option = `${wrongNote}${wrongOctave}`;
-      if (!wrongOptions.includes(option)) {
-        wrongOptions.push(option);
-      }
-    }
-    return wrongOptions;
-  };
-
-  // Shuffle an array using Fisher-Yates algorithm
-  const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  };
-
-  // Handle user's guess
-  const handleGuess = useCallback(
-    (guess) => {
-      if (!isActive) return;
-
-      const correctAnswer = `${currentNote.note}${currentNote.octave}`;
-      const isCorrect = guess === correctAnswer;
-
-      playSound(isCorrect ? "success" : "error");
-
-      setTotalGuesses((prev) => prev + 1);
-      if (isCorrect) {
-        setScore((prev) => prev + 1);
-        setFeedback("Correct!");
-      } else {
-        setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
-      }
-
-      // Generate a new question after a short delay
-      setTimeout(generateNewQuestion, 500);
-    },
-    [isActive, currentNote, playSound, generateNewQuestion]
-  );
-
   // Calculate and format the score display
   const getScoreDisplay = useCallback(() => {
     if (totalGuesses === 0) return "0/0 (0%)";
     const ratio = (score / totalGuesses).toFixed(2);
     return `${score}/${totalGuesses} (${(ratio * 100).toFixed(0)}%)`;
   }, [score, totalGuesses]);
-
-  // Start or reset the game
-  const startGame = useCallback(() => {
-    if (isActive) {
-      setIsActive(false);
-      clearTimeout(timerRef.current);
-      setFeedback("Game reset. Press Start to begin a new game.");
-      setMode("practice");
-      setCurrentNote(null);
-      setPreviousNote(null);
-    } else {
-      if (mode === "scored" && !selectedStudent) {
-        alert("Please select a student before starting the game.");
-        return;
-      }
-      setIsActive(true);
-      setTimeLeft(mode === "practice" ? 30 : 60);
-      setScore(0);
-      setTotalGuesses(0);
-      setFeedback("");
-      setPreviousNote(null);
-      isFirstRender.current = true;
-      endGameRef.current = false;
-    }
-  }, [isActive, mode, selectedStudent]);
 
   // Trigger confetti animation
   const triggerConfetti = useCallback(() => {
@@ -249,6 +161,7 @@ const GrandStaffQuiz = () => {
           playSound("highScoreSuccess");
           triggerConfetti();
         } catch (error) {
+          console.error("Error updating score:", error);
           setFeedback(
             `Your score: ${score} with ${accuracy.toFixed(
               2
@@ -292,6 +205,94 @@ const GrandStaffQuiz = () => {
     triggerConfetti,
     playSound,
   ]);
+
+  // Fetch students data from the API
+  const fetchStudents = useCallback(async () => {
+    try {
+      const response = await fetch("/api/checkUsers");
+      if (!response.ok) throw new Error("Failed to fetch students");
+      const data = await response.json();
+      setStudents(data.sort((a, b) => b.score - a.score));
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  }, []);
+
+  // Fetch students on component mount
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
+
+  // Handle game start and reset
+  useEffect(() => {
+    if (isActive && isFirstRender.current) {
+      generateNewQuestion();
+      isFirstRender.current = false;
+    } else if (!isActive) {
+      setCurrentNote(null);
+      setPreviousNote(null);
+      isFirstRender.current = true;
+    }
+  }, [isActive, generateNewQuestion]);
+
+  // Manage game timer
+  useEffect(() => {
+    if (isActive && timeLeft > 0) {
+      timerRef.current = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    } else if (timeLeft === 0) {
+      endGame();
+    }
+    return () => clearTimeout(timerRef.current);
+  }, [isActive, timeLeft, endGame]);
+
+  // Handle user's guess
+  const handleGuess = useCallback(
+    (guess) => {
+      if (!isActive) return;
+
+      const correctAnswer = `${currentNote.note}${currentNote.octave}`;
+      const isCorrect = guess === correctAnswer;
+
+      playSound(isCorrect ? "success" : "error");
+
+      setTotalGuesses((prev) => prev + 1);
+      if (isCorrect) {
+        setScore((prev) => prev + 1);
+        setFeedback("Correct!");
+      } else {
+        setFeedback(`Incorrect. The correct answer was ${correctAnswer}.`);
+      }
+
+      // Generate a new question after a short delay
+      setTimeout(generateNewQuestion, 500);
+    },
+    [isActive, currentNote, playSound, generateNewQuestion]
+  );
+
+  // Start or reset the game
+  const startGame = useCallback(() => {
+    if (isActive) {
+      setIsActive(false);
+      clearTimeout(timerRef.current);
+      setFeedback("Game reset. Press Start to begin a new game.");
+      setMode("practice");
+      setCurrentNote(null);
+      setPreviousNote(null);
+    } else {
+      if (mode === "scored" && !selectedStudent) {
+        alert("Please select a student before starting the game.");
+        return;
+      }
+      setIsActive(true);
+      setTimeLeft(mode === "practice" ? 30 : 60);
+      setScore(0);
+      setTotalGuesses(0);
+      setFeedback("");
+      setPreviousNote(null);
+      isFirstRender.current = true;
+      endGameRef.current = false;
+    }
+  }, [isActive, mode, selectedStudent]);
 
   // Format time display
   const formatTime = (seconds) => {
