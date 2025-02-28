@@ -86,15 +86,15 @@ export default function UserForm({
     <div className="max-w-md mx-auto mt-8">
       <form
         onSubmit={handleSubmit}
-        className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-800">
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 border border-gray-300">
         <div className="mb-4">
           <label
-            className="block text-white text-sm font-bold mb-2"
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="firstName">
             First Name
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-gray-300 placeholder-gray-400"
             id="firstName"
             type="text"
             placeholder="Enter first name"
@@ -106,12 +106,12 @@ export default function UserForm({
         </div>
         <div className="mb-4">
           <label
-            className="block text-white text-sm font-bold mb-2"
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="lastName">
             Last Name
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-gray-300 placeholder-gray-400"
             id="lastName"
             type="text"
             placeholder="Enter last name"
@@ -123,12 +123,12 @@ export default function UserForm({
         </div>
         <div className="mb-4">
           <label
-            className="block text-white text-sm font-bold mb-2"
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="role">
             Role
           </label>
           <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-gray-300"
             id="role"
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -141,12 +141,12 @@ export default function UserForm({
         {role === "Student" && (
           <div className="mb-4">
             <label
-              className="block text-white text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="grade">
               Grade
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-gray-300 placeholder-gray-400"
               id="grade"
               type="number"
               placeholder="Enter grade"
@@ -159,12 +159,12 @@ export default function UserForm({
         )}
         <div className="mb-4">
           <label
-            className="block text-white text-sm font-bold mb-2"
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="mainInstrument">
             Main Instrument
           </label>
           <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-gray-300"
             id="mainInstrument"
             value={mainInstrument}
             onChange={(e) => setMainInstrument(e.target.value)}
@@ -182,12 +182,12 @@ export default function UserForm({
         </div>
         <div className="mb-4">
           <label
-            className="block text-white text-sm font-bold mb-2"
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="currentlyPracticing">
             Currently Practicing
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-900 border-gray-800 placeholder-gray-500"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-gray-300 placeholder-gray-400"
             id="currentlyPracticing"
             type="text"
             placeholder="Enter current practice focus"
@@ -198,12 +198,12 @@ export default function UserForm({
         </div>
         <div className="flex items-center justify-between">
           <button
-            className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit">
             {editingUser ? "Update Member" : "Add Member"}
           </button>
           <button
-            className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
             onClick={onCancel}>
             Cancel
@@ -212,7 +212,9 @@ export default function UserForm({
       </form>
       {message && (
         <p
-          className={`text-center ${isError ? "text-gray-400" : "text-white"}`}>
+          className={`text-center ${
+            isError ? "text-red-500" : "text-green-500"
+          }`}>
           {message}
         </p>
       )}
