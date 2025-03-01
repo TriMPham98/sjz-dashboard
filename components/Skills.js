@@ -172,17 +172,26 @@ export default function Skills() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* User selection panel */}
         <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Select Student</h2>
+          <h2 className="text-xl font-semibold mb-4">Select User</h2>
           <div className="max-h-96 overflow-y-auto">
             {users.length > 0 ? (
               <ul className="divide-y divide-gray-200">
                 {users
-                  .filter((user) => user.role === "Student")
-                  .sort(
-                    (a, b) =>
-                      a.grade - b.grade ||
-                      a.last_name.localeCompare(b.last_name)
-                  )
+                  .sort((a, b) => {
+                    // First sort by role
+                    const roleOrder = { Student: 0, Alumni: 1, Teacher: 2 };
+                    if (roleOrder[a.role] !== roleOrder[b.role]) {
+                      return roleOrder[a.role] - roleOrder[b.role];
+                    }
+                    // Then for students, sort by grade
+                    if (a.role === "Student") {
+                      if (a.grade !== b.grade) {
+                        return a.grade - b.grade;
+                      }
+                    }
+                    // Finally sort by last name
+                    return a.last_name.localeCompare(b.last_name);
+                  })
                   .map((user) => (
                     <li
                       key={user.id}
@@ -194,13 +203,16 @@ export default function Skills() {
                         {user.first_name} {user.last_name}
                       </div>
                       <div className="text-sm text-gray-500">
-                        Grade: {user.grade}
+                        {user.role}{" "}
+                        {user.role === "Student"
+                          ? `- Grade: ${user.grade}`
+                          : ""}
                       </div>
                     </li>
                   ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No students found</p>
+              <p className="text-gray-500">No users found</p>
             )}
           </div>
         </div>
@@ -214,6 +226,9 @@ export default function Skills() {
                 Adding skill for:{" "}
                 <span className="font-medium">
                   {selectedUser.first_name} {selectedUser.last_name}
+                </span>
+                <span className="ml-2 text-sm text-gray-500">
+                  ({selectedUser.role})
                 </span>
               </p>
               <div className="mb-4">
