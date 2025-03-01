@@ -244,7 +244,7 @@ export default function Home() {
             {activeTab === "skills" && (
               <div className="space-y-6">
                 <h1 className="text-2xl font-bold text-gray-800">
-                  Skills Tracker
+                  Skills Compilation
                 </h1>
                 <div className="bg-white shadow-sm rounded-lg overflow-hidden p-6">
                   <Skills />

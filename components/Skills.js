@@ -311,7 +311,7 @@ export default function Skills() {
               <p className="text-gray-500">No skills recorded yet</p>
             )
           ) : (
-            <p className="text-gray-500">Please select a student first</p>
+            <p className="text-gray-500">Please select a user first</p>
           )}
         </div>
       </div>
