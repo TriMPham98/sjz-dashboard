@@ -6,6 +6,7 @@ import UserList from "../components/UserList";
 import Dashboard from "../components/Dashboard";
 import Resources from "../components/Resources";
 import Quizzes from "../components/Quizzes";
+import Skills from "../components/Skills";
 import Footer from "../components/Footer";
 import PasswordPopup from "../components/PasswordPopup";
 import {
@@ -17,6 +18,7 @@ import {
   Bell,
   Menu,
   X,
+  Award,
 } from "lucide-react";
 
 // Main component for the home page of the San Jose Jazz Progressions application
@@ -100,6 +102,7 @@ export default function Home() {
     { id: "dashboard", icon: HomeIcon, label: "Dashboard" },
     { id: "quizzes", icon: Music, label: "Quizzes" },
     { id: "resources", icon: BookOpen, label: "Resources" },
+    { id: "skills", icon: Award, label: "Skills" },
     { id: "members", icon: Users, label: "Members" },
   ];
 
@@ -233,6 +236,18 @@ export default function Home() {
                 <h1 className="text-2xl font-bold text-gray-800">Resources</h1>
                 <div className="bg-white shadow-sm rounded-lg overflow-hidden p-6">
                   <Resources />
+                </div>
+              </div>
+            )}
+
+            {/* Skills content */}
+            {activeTab === "skills" && (
+              <div className="space-y-6">
+                <h1 className="text-2xl font-bold text-gray-800">
+                  Skills Tracker
+                </h1>
+                <div className="bg-white shadow-sm rounded-lg overflow-hidden p-6">
+                  <Skills />
                 </div>
               </div>
             )}
