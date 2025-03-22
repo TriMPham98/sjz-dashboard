@@ -35,17 +35,14 @@ const StaffRenderer = ({ currentNote }) => {
       const isOnTrebleStaff = currentNote.octave >= 4;
       const staveToUse = isOnTrebleStaff ? trebleStaff : bassStaff;
 
+      // Format the note key with accidentals included in the string
+      let noteKey = currentNote.note.toLowerCase() + "/" + currentNote.octave;
+
       const note = new VF.StaveNote({
         clef: isOnTrebleStaff ? "treble" : "bass",
-        keys: [`${currentNote.note.toLowerCase()}/${currentNote.octave}`],
+        keys: [noteKey],
         duration: "w",
       });
-
-      if (currentNote.note.includes("#")) {
-        note.addAccidental(0, new VF.Accidental("#"));
-      } else if (currentNote.note.includes("b")) {
-        note.addAccidental(0, new VF.Accidental("b"));
-      }
 
       if (isOnTrebleStaff) {
         if (
