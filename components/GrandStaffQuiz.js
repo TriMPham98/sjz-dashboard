@@ -6,20 +6,20 @@ import { useSound } from "./SoundManager";
 
 // Define the range of notes used in the quiz
 const leftHandNotes = [
-  { note: "C", octave: 3 },
-  { note: "D", octave: 3 },
   { note: "G", octave: 3 },
   { note: "A", octave: 3 },
   { note: "B", octave: 3 },
+  { note: "C", octave: 4 },
+  { note: "D", octave: 4 },
 ];
 
 const rightHandNotes = [
-  { note: "C", octave: 4 },
-  { note: "D", octave: 4 },
   { note: "F#", octave: 4 },
   { note: "G", octave: 4 },
   { note: "A", octave: 4 },
   { note: "B", octave: 4 },
+  { note: "C", octave: 5 },
+  { note: "D", octave: 5 },
 ];
 
 const GrandStaffQuiz = () => {
@@ -59,11 +59,20 @@ const GrandStaffQuiz = () => {
   // Generate incorrect options for the quiz
   const generateWrongOptions = (correctNote) => {
     const wrongOptions = [];
-    const allNotes = [...leftHandNotes, ...rightHandNotes];
+
+    // Determine if the correct note is from left or right hand
+    const isLeftHand = leftHandNotes.some(
+      (note) =>
+        note.note === correctNote.note && note.octave === correctNote.octave
+    );
+
+    // Use only notes from the same hand
+    const notesArray = isLeftHand ? leftHandNotes : rightHandNotes;
 
     while (wrongOptions.length < 3) {
-      // Pick a random note from all available notes
-      const randomNote = allNotes[Math.floor(Math.random() * allNotes.length)];
+      // Pick a random note from the same hand
+      const randomNote =
+        notesArray[Math.floor(Math.random() * notesArray.length)];
 
       // Skip if it's the correct note
       if (
@@ -381,9 +390,6 @@ const GrandStaffQuiz = () => {
       <h2 className="text-xl font-bold text-center">
         Test Your Note Reading Skills 🎹 🎵
       </h2>
-      <p className="text-center text-sm">
-        Left Hand: G3, A3, B3, C3, D3 | Right Hand: F#4, G4, A4, B4, C4, D4
-      </p>
 
       {/* Mode selection buttons */}
       <div className="mb-4">
@@ -451,7 +457,7 @@ const GrandStaffQuiz = () => {
                   : "bg-red-600 text-white hover:bg-red-700"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             } rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}>
-            {option}
+            {option.replace(/[0-9]/g, "")}
           </button>
         ))}
       </div>
