@@ -4,9 +4,23 @@ import PasswordPopup from "./PasswordPopup";
 import StaffRenderer from "./StaffRenderer";
 import { useSound } from "./SoundManager";
 
-// Define the range of notes and octaves used in the quiz
-const notes = ["C", "D", "E", "F", "G", "A", "B"];
-const octaves = [3, 4];
+// Define the range of notes used in the quiz
+const leftHandNotes = [
+  { note: "C", octave: 3 },
+  { note: "D", octave: 3 },
+  { note: "G", octave: 3 },
+  { note: "A", octave: 3 },
+  { note: "B", octave: 3 },
+];
+
+const rightHandNotes = [
+  { note: "C", octave: 4 },
+  { note: "D", octave: 4 },
+  { note: "F#", octave: 4 },
+  { note: "G", octave: 4 },
+  { note: "A", octave: 4 },
+  { note: "B", octave: 4 },
+];
 
 const GrandStaffQuiz = () => {
   // State variables for managing the quiz
@@ -45,17 +59,21 @@ const GrandStaffQuiz = () => {
   // Generate incorrect options for the quiz
   const generateWrongOptions = (correctNote) => {
     const wrongOptions = [];
-    while (wrongOptions.length < 3) {
-      let wrongNote, wrongOctave;
-      do {
-        wrongNote = notes[Math.floor(Math.random() * notes.length)];
-        wrongOctave = octaves[Math.floor(Math.random() * octaves.length)];
-      } while (
-        wrongOctave === correctNote.octave &&
-        wrongNote === correctNote.note
-      );
+    const allNotes = [...leftHandNotes, ...rightHandNotes];
 
-      const option = `${wrongNote}${wrongOctave}`;
+    while (wrongOptions.length < 3) {
+      // Pick a random note from all available notes
+      const randomNote = allNotes[Math.floor(Math.random() * allNotes.length)];
+
+      // Skip if it's the correct note
+      if (
+        randomNote.note === correctNote.note &&
+        randomNote.octave === correctNote.octave
+      ) {
+        continue;
+      }
+
+      const option = `${randomNote.note}${randomNote.octave}`;
       if (!wrongOptions.includes(option)) {
         wrongOptions.push(option);
       }
@@ -68,10 +86,10 @@ const GrandStaffQuiz = () => {
     let correctNote;
     // Ensure the new note is different from the previous one
     do {
-      correctNote = {
-        note: notes[Math.floor(Math.random() * notes.length)],
-        octave: octaves[Math.floor(Math.random() * octaves.length)],
-      };
+      // Randomly choose between left and right hand
+      const isLeftHand = Math.random() < 0.5;
+      const notesArray = isLeftHand ? leftHandNotes : rightHandNotes;
+      correctNote = notesArray[Math.floor(Math.random() * notesArray.length)];
     } while (
       previousNote &&
       correctNote.note === previousNote.note &&
@@ -363,7 +381,9 @@ const GrandStaffQuiz = () => {
       <h2 className="text-xl font-bold text-center">
         Test Your Note Reading Skills 🎹 🎵
       </h2>
-      <p className="text-center text-sm">Range: C3 to B4</p>
+      <p className="text-center text-sm">
+        Left Hand: G3, A3, B3, C3, D3 | Right Hand: F#4, G4, A4, B4, C4, D4
+      </p>
 
       {/* Mode selection buttons */}
       <div className="mb-4">
