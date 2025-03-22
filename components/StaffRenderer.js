@@ -32,7 +32,7 @@ const StaffRenderer = ({ currentNote }) => {
     bassStaff.addClef("bass").setContext(context).draw();
 
     if (currentNote) {
-      const isOnTrebleStaff = currentNote.octave === 4;
+      const isOnTrebleStaff = currentNote.octave >= 4;
       const staveToUse = isOnTrebleStaff ? trebleStaff : bassStaff;
 
       const note = new VF.StaveNote({
@@ -41,14 +41,23 @@ const StaffRenderer = ({ currentNote }) => {
         duration: "w",
       });
 
+      if (currentNote.note.includes("#")) {
+        note.addAccidental(0, new VF.Accidental("#"));
+      } else if (currentNote.note.includes("b")) {
+        note.addAccidental(0, new VF.Accidental("b"));
+      }
+
       if (isOnTrebleStaff) {
-        if (["C", "D", "E"].includes(currentNote.note)) {
+        if (
+          ["C", "D", "E"].includes(currentNote.note.replace(/#|b/, "")) &&
+          currentNote.octave === 4
+        ) {
           note.addModifier(new VF.Annotation("").setPosition(1));
         }
       } else {
-        if (["A", "B"].includes(currentNote.note)) {
+        if (["A", "B"].includes(currentNote.note.replace(/#|b/, ""))) {
           note.addModifier(new VF.Annotation("").setPosition(3));
-        } else if (currentNote.note === "C") {
+        } else if (currentNote.note.replace(/#|b/, "") === "C") {
           note.addModifier(new VF.Annotation("").setPosition(1));
         }
       }
