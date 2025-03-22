@@ -32,38 +32,64 @@ const StaffRenderer = ({ currentNote }) => {
     bassStaff.addClef("bass").setContext(context).draw();
 
     if (currentNote) {
-      const isOnTrebleStaff = currentNote.octave >= 4;
-      const staveToUse = isOnTrebleStaff ? trebleStaff : bassStaff;
+      // Determine which staff to use
+      let isRightHand = currentNote.octave >= 4;
 
-      // Format the note key with accidentals included in the string
-      let noteKey = currentNote.note.toLowerCase() + "/" + currentNote.octave;
+      // Force F# to right hand (treble staff)
+      if (currentNote.note === "F#") {
+        isRightHand = true;
+      }
 
+      const staveToUse = isRightHand ? trebleStaff : bassStaff;
+      const clef = isRightHand ? "treble" : "bass";
+
+      // Get base note without accidentals
+      const baseName = currentNote.note.charAt(0).toLowerCase();
+      const noteKey = `${baseName}/${currentNote.octave}`;
+
+      // Create the note
       const note = new VF.StaveNote({
-        clef: isOnTrebleStaff ? "treble" : "bass",
+        clef: clef,
         keys: [noteKey],
         duration: "w",
       });
 
-      if (isOnTrebleStaff) {
+      // Special handling for F#
+      if (currentNote.note === "F#") {
+        try {
+          // Add text annotation instead of trying to add the accidental
+          note.addModifier(
+            new VF.Annotation("F#").setPosition(3).setFont("Arial", 12, "bold")
+          );
+        } catch (error) {
+          console.error("Error adding F# annotation:", error);
+        }
+      }
+      // Add appropriate modifiers based on note placement
+      else if (isRightHand) {
         if (
-          ["C", "D", "E"].includes(currentNote.note.replace(/#|b/, "")) &&
+          ["C", "D", "E"].includes(currentNote.note.charAt(0)) &&
           currentNote.octave === 4
         ) {
           note.addModifier(new VF.Annotation("").setPosition(1));
         }
       } else {
-        if (["A", "B"].includes(currentNote.note.replace(/#|b/, ""))) {
+        if (["A", "B"].includes(currentNote.note.charAt(0))) {
           note.addModifier(new VF.Annotation("").setPosition(3));
-        } else if (currentNote.note.replace(/#|b/, "") === "C") {
+        } else if (currentNote.note.charAt(0) === "C") {
           note.addModifier(new VF.Annotation("").setPosition(1));
         }
       }
 
-      const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
-      voice.addTickables([note]);
+      try {
+        const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
+        voice.addTickables([note]);
 
-      new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 50);
-      voice.draw(context, staveToUse);
+        new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 50);
+        voice.draw(context, staveToUse);
+      } catch (error) {
+        console.error("Error drawing note:", error);
+      }
     }
   }, [currentNote, staffRef]);
 
