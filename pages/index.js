@@ -15,7 +15,6 @@ import {
   Music,
   Users,
   Search,
-  Bell,
   Menu,
   X,
   Award,
@@ -126,11 +125,6 @@ export default function Home() {
             )}
           </button>
           <h1 className="text-xl font-bold">SJZ Progressions</h1>
-          <div className="flex items-center space-x-2">
-            <button className="p-1 rounded-full hover:bg-gray-200">
-              <Bell className="h-5 w-5 text-gray-600" />
-            </button>
-          </div>
         </div>
 
         {/* Mobile navigation menu */}
@@ -199,9 +193,6 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="p-1 rounded-full text-gray-600 hover:bg-gray-100">
-                <Bell className="h-6 w-6" />
-              </button>
               <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
                 SJ
               </div>
