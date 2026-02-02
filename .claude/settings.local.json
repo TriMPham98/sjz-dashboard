@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(sqlite3:*)",
+      "Bash(npx next build:*)"
+    ]
+  }
+}

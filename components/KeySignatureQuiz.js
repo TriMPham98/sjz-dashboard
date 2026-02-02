@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PasswordPopup from "./PasswordPopup";
-import StaffRenderer from "./StaffRenderer";
+import KeySignatureRenderer from "./KeySignatureRenderer";
 import { useSound } from "./SoundManager";
 import useQuizTimer from "../hooks/useQuizTimer";
 import useGameState from "../hooks/useGameState";
@@ -11,65 +11,32 @@ import {
   INCORRECT_ANSWER_DELAY,
   CORRECT_ANSWER_DELAY,
   REQUIRED_ACCURACY_FOR_HS,
-  DEFAULT_COMPETITIVE_TRIES,
   shuffleArray,
 } from "../hooks/quizConstants";
+import { KEY_SIGNATURES } from "../data/keySignatures";
 import ModeSelector from "./quiz/ModeSelector";
 import StudentSelector from "./quiz/StudentSelector";
 import QuizAnswerGrid from "./quiz/QuizAnswerGrid";
 import ScoreTimerDisplay from "./quiz/ScoreTimerDisplay";
 import GameControls from "./quiz/GameControls";
 
-// --- Quiz-specific constants ---
-const LEFT_HAND_NOTES = [
-  { note: "G", octave: 3 },
-  { note: "A", octave: 3 },
-  { note: "B", octave: 3 },
-  { note: "C", octave: 4 },
-  { note: "D", octave: 4 },
-];
-const RIGHT_HAND_NOTES = [
-  { note: "F#", octave: 4 },
-  { note: "G", octave: 4 },
-  { note: "A", octave: 4 },
-  { note: "B", octave: 4 },
-  { note: "C", octave: 5 },
-  { note: "D", octave: 5 },
-];
-
-const generateWrongOptions = (correctNote) => {
-  const wrongOptions = [];
-  const isLeftHand = LEFT_HAND_NOTES.some(
-    (note) =>
-      note.note === correctNote.note && note.octave === correctNote.octave
-  );
-  const notesArray = isLeftHand ? LEFT_HAND_NOTES : RIGHT_HAND_NOTES;
-
-  while (wrongOptions.length < 3) {
-    const randomNote =
-      notesArray[Math.floor(Math.random() * notesArray.length)];
-    if (
-      randomNote.note === correctNote.note &&
-      randomNote.octave === correctNote.octave
-    ) {
-      continue;
-    }
-    const option = `${randomNote.note}${randomNote.octave}`;
-    if (!wrongOptions.includes(option)) {
-      wrongOptions.push(option);
-    }
-  }
-  return wrongOptions;
+const generateWrongKeyOptions = (correctKey) => {
+  const wrong = KEY_SIGNATURES.filter(
+    (k) => k.keySpec !== correctKey.keySpec
+  )
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3)
+    .map((k) => k.displayName);
+  return wrong;
 };
 
-// --- Component ---
-const GrandStaffQuiz = () => {
-  const [currentNote, setCurrentNote] = useState(null);
-  const [previousNote, setPreviousNote] = useState(null);
+const KeySignatureQuiz = () => {
+  const [currentKey, setCurrentKey] = useState(null);
+  const [previousKey, setPreviousKey] = useState(null);
   const [options, setOptions] = useState([]);
   const [mode, setMode] = useState("practice");
 
-  const { playSound, playNote } = useSound();
+  const { playSound } = useSound();
 
   const gameState = useGameState();
   const {
@@ -93,7 +60,7 @@ const GrandStaffQuiz = () => {
     resetGameState: resetGame,
   } = gameState;
 
-  const studentMgmt = useStudentManagement({ scoreField: "score" });
+  const studentMgmt = useStudentManagement({ scoreField: "keysig_score" });
   const {
     students,
     setStudents,
@@ -102,7 +69,6 @@ const GrandStaffQuiz = () => {
     showPasswordPopup,
     tempStudentSelection,
     competitiveTriesLeft,
-    setCompetitiveTriesLeft,
     handlePasswordCancel,
     decrementTries,
     resetTries,
@@ -124,7 +90,7 @@ const GrandStaffQuiz = () => {
       finalFeedback = `Practice complete! Final score: ${getScoreDisplay()}.`;
       playSound("practiceSuccess");
     } else if (mode === "scored" && selectedStudent) {
-      const currentHighScore = selectedStudent.score || 0;
+      const currentHighScore = selectedStudent.keysig_score || 0;
       const canUpdateHighScore =
         accuracy >= REQUIRED_ACCURACY_FOR_HS && score > currentHighScore;
       let beatHighScore = false;
@@ -133,13 +99,15 @@ const GrandStaffQuiz = () => {
 
       if (canUpdateHighScore) {
         try {
-          const response = await fetch("/api/updateScore", {
+          const response = await fetch("/api/updateKeySigScore", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: selectedStudent.id, score }),
           });
           if (!response.ok)
-            throw new Error(`Failed to update score: ${response.statusText}`);
+            throw new Error(
+              `Failed to update score: ${response.statusText}`
+            );
 
           finalFeedback = `Congratulations, ${selectedStudent.first_name}! New High Score: ${score} (${accuracyDisplay}% accuracy).`;
           beatHighScore = true;
@@ -147,12 +115,17 @@ const GrandStaffQuiz = () => {
           const updatedStudents = students
             .map((student) =>
               student.id === selectedStudent.id
-                ? { ...student, score }
+                ? { ...student, keysig_score: score }
                 : student
             )
-            .sort((a, b) => b.score - a.score);
+            .sort(
+              (a, b) => (b.keysig_score ?? 0) - (a.keysig_score ?? 0)
+            );
           setStudents(updatedStudents);
-          setSelectedStudent((prev) => ({ ...prev, score }));
+          setSelectedStudent((prev) => ({
+            ...prev,
+            keysig_score: score,
+          }));
 
           playSound("highScoreSuccess");
           triggerConfetti();
@@ -188,7 +161,7 @@ const GrandStaffQuiz = () => {
     }
 
     setFeedback(finalFeedback);
-    setPreviousNote(null);
+    setPreviousKey(null);
 
     setTimeout(() => {
       endGameRef.current = false;
@@ -223,35 +196,35 @@ const GrandStaffQuiz = () => {
   const generateNewQuestion = useCallback(() => {
     clearTimeout(feedbackTimeoutRef.current);
 
-    let correctNote;
+    let newKey;
     let attempts = 0;
-    const maxAttempts =
-      (LEFT_HAND_NOTES.length + RIGHT_HAND_NOTES.length) * 2;
     do {
-      const isLeftHand = Math.random() < 0.5;
-      const notesArray = isLeftHand ? LEFT_HAND_NOTES : RIGHT_HAND_NOTES;
-      correctNote = notesArray[Math.floor(Math.random() * notesArray.length)];
+      newKey =
+        KEY_SIGNATURES[Math.floor(Math.random() * KEY_SIGNATURES.length)];
       attempts++;
     } while (
-      previousNote &&
-      correctNote.note === previousNote.note &&
-      correctNote.octave === previousNote.octave &&
-      attempts < maxAttempts
+      previousKey &&
+      newKey.keySpec === previousKey.keySpec &&
+      attempts < KEY_SIGNATURES.length * 2
     );
 
-    setCurrentNote(correctNote);
-    setPreviousNote(correctNote);
-    playNote(correctNote.note, correctNote.octave);
+    setCurrentKey(newKey);
+    setPreviousKey(newKey);
 
     const newOptions = [
-      `${correctNote.note}${correctNote.octave}`,
-      ...generateWrongOptions(correctNote),
+      newKey.displayName,
+      ...generateWrongKeyOptions(newKey),
     ];
     shuffleArray(newOptions);
     setOptions(newOptions);
     setFeedback("");
     setIsWaitingForNextQuestion(false);
-  }, [previousNote, playNote, feedbackTimeoutRef, setFeedback, setIsWaitingForNextQuestion]);
+  }, [
+    previousKey,
+    feedbackTimeoutRef,
+    setFeedback,
+    setIsWaitingForNextQuestion,
+  ]);
 
   const handleModeChange = useCallback(
     (newMode) => {
@@ -263,14 +236,14 @@ const GrandStaffQuiz = () => {
         newMode === "practice" ? PRACTICE_TIME : SCORED_TIME
       );
       setMode(newMode);
-      setCurrentNote(null);
-      setPreviousNote(null);
+      setCurrentKey(null);
+      setPreviousKey(null);
       setOptions([]);
       setSelectedStudent(null);
       resetTries();
 
       if (newMode !== "scored") {
-        const dropdown = document.getElementById("student-select");
+        const dropdown = document.getElementById("student-select-keysig");
         if (dropdown) dropdown.value = "";
       }
     },
@@ -282,13 +255,15 @@ const GrandStaffQuiz = () => {
       clearTimeout(timer.timerRef.current);
       resetGame("Game reset. Press Start.");
       timer.resetTimer(mode === "practice" ? PRACTICE_TIME : SCORED_TIME);
-      setCurrentNote(null);
-      setPreviousNote(null);
+      setCurrentKey(null);
+      setPreviousKey(null);
       setOptions([]);
     } else {
       if (mode === "scored") {
         if (!selectedStudent) {
-          alert("Please select a student before starting Competitive mode.");
+          alert(
+            "Please select a student before starting Competitive mode."
+          );
           return;
         }
         if (competitiveTriesLeft <= 0) {
@@ -301,8 +276,8 @@ const GrandStaffQuiz = () => {
       clearTimeout(timer.timerRef.current);
       resetGame("");
       timer.resetTimer(mode === "practice" ? PRACTICE_TIME : SCORED_TIME);
-      setCurrentNote(null);
-      setPreviousNote(null);
+      setCurrentKey(null);
+      setPreviousKey(null);
       setOptions([]);
       setIsActive(true);
     }
@@ -335,10 +310,12 @@ const GrandStaffQuiz = () => {
         onSuccess: (student) => {
           setMode("scored");
           clearTimeout(timer.timerRef.current);
-          resetGame(`${student?.first_name || "Student"} selected. Press Start.`);
+          resetGame(
+            `${student?.first_name || "Student"} selected. Press Start.`
+          );
           timer.resetTimer(SCORED_TIME);
-          setCurrentNote(null);
-          setPreviousNote(null);
+          setCurrentKey(null);
+          setPreviousKey(null);
           setOptions([]);
         },
       });
@@ -348,12 +325,13 @@ const GrandStaffQuiz = () => {
 
   const handleGuess = useCallback(
     (guess) => {
-      if (!isActive || isWaitingForNextQuestion || endGameRef.current) return;
+      if (!isActive || isWaitingForNextQuestion || endGameRef.current)
+        return;
 
       clearTimeout(feedbackTimeoutRef.current);
       setIsWaitingForNextQuestion(true);
 
-      const correctAnswer = `${currentNote.note}${currentNote.octave}`;
+      const correctAnswer = currentKey.displayName;
       const isCorrect = guess === correctAnswer;
 
       playSound(isCorrect ? "success" : "error");
@@ -388,7 +366,7 @@ const GrandStaffQuiz = () => {
     [
       isActive,
       isWaitingForNextQuestion,
-      currentNote,
+      currentKey,
       playSound,
       generateNewQuestion,
       incrementScore,
@@ -401,7 +379,6 @@ const GrandStaffQuiz = () => {
     ]
   );
 
-  // Start first question when game becomes active
   useEffect(() => {
     if (isActive && isFirstRender.current) {
       generateNewQuestion();
@@ -414,7 +391,7 @@ const GrandStaffQuiz = () => {
       ref={quizContainerRef}
       className="p-4 max-w-md mx-auto bg-white rounded-xl shadow-lg space-y-4 text-gray-800 font-sans">
       <h2 className="text-2xl font-bold text-center text-indigo-700">
-        Grand Staff Note Quiz
+        Key Signature Quiz
       </h2>
 
       <ModeSelector
@@ -430,17 +407,17 @@ const GrandStaffQuiz = () => {
           competitiveTriesLeft={competitiveTriesLeft}
           onStudentChange={handleStudentChange}
           disabled={isActive}
-          scoreField="score"
+          scoreField="keysig_score"
         />
       )}
 
-      <div className="h-48 flex items-center justify-center border-t border-b border-gray-200 py-4 my-4 bg-gray-50 rounded">
-        {currentNote ? (
-          <StaffRenderer currentNote={currentNote} />
+      <div className="h-36 flex items-center justify-center border-t border-b border-gray-200 py-4 my-4 bg-gray-50 rounded">
+        {currentKey ? (
+          <KeySignatureRenderer keySpec={currentKey.keySpec} />
         ) : (
           <div className="text-gray-400 italic">
             {isActive
-              ? "Loading note..."
+              ? "Loading key signature..."
               : feedback || "Press Start to begin..."}
           </div>
         )}
@@ -452,7 +429,6 @@ const GrandStaffQuiz = () => {
         disabled={!isActive || isWaitingForNextQuestion}
         mode={mode}
         isActive={isActive}
-        formatOption={(opt) => opt.replace(/[0-9]/g, "")}
       />
 
       <ScoreTimerDisplay
@@ -485,4 +461,4 @@ const GrandStaffQuiz = () => {
   );
 };
 
-export default GrandStaffQuiz;
+export default KeySignatureQuiz;

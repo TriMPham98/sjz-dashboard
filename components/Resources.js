@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import GrandStaffQuiz from "./GrandStaffQuiz";
+import DrumMachine from "./DrumMachine";
 
 const Resources = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -61,12 +61,7 @@ const Resources = () => {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Drum Machine
           </h2>
-          <p className="text-gray-600 mb-4">
-            Make your own beats. Coming soon!
-          </p>
-          <button className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
-            (Coming Soon)
-          </button>
+          <DrumMachine />
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React from "react";
 import GrandStaffQuiz from "./GrandStaffQuiz";
 import RhythmGame from "./RhythmGame";
 import ChordQuickdrawQuiz from "./ChordQuickdraw";
+import KeySignatureQuiz from "./KeySignatureQuiz";
 
 const Quizzes = () => {
   return (
@@ -18,12 +19,6 @@ const Quizzes = () => {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Chord Quickdraw Quiz
           </h2>
-          {/* <p className="text-gray-600 mb-4">
-            Practice your chord quickdraw speed. Coming soon!
-          </p>
-          <button className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
-            Start Quiz (Coming Soon)
-          </button> */}
           <ChordQuickdrawQuiz />
         </div>
 
@@ -45,12 +40,7 @@ const Quizzes = () => {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Key Signature Quiz
           </h2>
-          <p className="text-gray-600 mb-4">
-            Test your knowledge of key signatures. Coming soon!
-          </p>
-          <button className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
-            Start Quiz (Coming Soon)
-          </button>
+          <KeySignatureQuiz />
         </div>
       </div>
     </div>
